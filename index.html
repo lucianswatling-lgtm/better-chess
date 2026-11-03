@@ -1,0 +1,3072 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Better Chess</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --board-light: #334155;
+            --board-dark: #0f172a;
+            --board-border: #38bdf8;
+            --p1-color: #38bdf8;
+            --p1-glow: rgba(56, 189, 248, 0.5);
+            --p2-color: #f43f5e;
+            --p2-glow: rgba(244, 63, 94, 0.5);
+            --accent: #a855f7;
+            --board-bg-image: none;
+        }
+
+        [data-theme="magma"] {
+            --bg-primary: #180808; --board-light: #57241b; --board-dark: #260d0d; --board-border: #f97316;
+            --p1-color: #facc15; --p1-glow: rgba(250, 204, 21, 0.5); --p2-color: #ef4444; --p2-glow: rgba(239, 68, 68, 0.5); --accent: #ea580c;
+        }
+        [data-theme="celestial"] {
+            --bg-primary: #0f172a; --board-light: #e2e8f0; --board-dark: #94a3b8; --board-border: #fbbf24;
+            --p1-color: #2563eb; --p1-glow: rgba(37, 99, 235, 0.45); --p2-color: #9333ea; --p2-glow: rgba(147, 51, 234, 0.45); --accent: #f59e0b;
+        }
+        [data-theme="toxic"] {
+            --bg-primary: #06150d; --board-light: #1e3a2f; --board-dark: #091e14; --board-border: #10b981;
+            --p1-color: #4ade80; --p1-glow: rgba(74, 222, 128, 0.5); --p2-color: #c084fc; --p2-glow: rgba(192, 132, 252, 0.5); --accent: #10b981;
+        }
+        [data-theme="synthwave"] {
+            --bg-primary: #120428; --board-light: #3b096c; --board-dark: #190033; --board-border: #ff007f;
+            --p1-color: #00f5d4; --p1-glow: rgba(0, 245, 212, 0.5); --p2-color: #ff007f; --p2-glow: rgba(255, 0, 127, 0.5); --accent: #f15bb5;
+        }
+        [data-theme="royal"] {
+            --bg-primary: #0c0a09; --board-light: #78350f; --board-dark: #292524; --board-border: #fbbf24;
+            --p1-color: #fde047; --p1-glow: rgba(253, 224, 71, 0.5); --p2-color: #cbd5e1; --p2-glow: rgba(203, 213, 225, 0.5); --accent: #f59e0b;
+        }
+        [data-theme="frost"] {
+            --bg-primary: #04131d; --board-light: #0369a1; --board-dark: #0c2b40; --board-border: #7dd3fc;
+            --p1-color: #e0f2fe; --p1-glow: rgba(224, 242, 254, 0.5); --p2-color: #38bdf8; --p2-glow: rgba(56, 189, 248, 0.5); --accent: #0284c7;
+        }
+        [data-theme="sakura"] {
+            --bg-primary: #1f0812; --board-light: #831843; --board-dark: #3b071e; --board-border: #f472b6;
+            --p1-color: #fbcfe8; --p1-glow: rgba(251, 207, 232, 0.5); --p2-color: #fb7185; --p2-glow: rgba(251, 113, 133, 0.5); --accent: #ec4899;
+        }
+        [data-theme="classic-wood"] {
+            --bg-primary: #1c130c; --board-light: #d6b386; --board-dark: #7c4d2b; --board-border: #b45309;
+            --p1-color: #fef3c7; --p1-glow: rgba(254, 243, 199, 0.4); --p2-color: #292524; --p2-glow: rgba(41, 37, 36, 0.5); --accent: #d97706;
+        }
+        [data-theme="midnight"] {
+            --bg-primary: #090514; --board-light: #311052; --board-dark: #140526; --board-border: #8b5cf6;
+            --p1-color: #c4b5fd; --p1-glow: rgba(196, 181, 253, 0.5); --p2-color: #ec4899; --p2-glow: rgba(236, 72, 153, 0.5); --accent: #7c3aed;
+        }
+        [data-theme="solar"] {
+            --bg-primary: #180c00; --board-light: #9a3412; --board-dark: #431407; --board-border: #facc15;
+            --p1-color: #fef08a; --p1-glow: rgba(254, 240, 138, 0.5); --p2-color: #f97316; --p2-glow: rgba(249, 115, 22, 0.5); --accent: #eab308;
+        }
+        [data-theme="abyss"] {
+            --bg-primary: #020813; --board-light: #155e75; --board-dark: #082f49; --board-border: #06b6d4;
+            --p1-color: #22d3ee; --p1-glow: rgba(34, 211, 238, 0.5); --p2-color: #f43f5e; --p2-glow: rgba(244, 63, 94, 0.5); --accent: #0891b2;
+        }
+        [data-theme="emerald"] {
+            --bg-primary: #02120a; --board-light: #065f46; --board-dark: #06281e; --board-border: #34d399;
+            --p1-color: #6ee7b7; --p1-glow: rgba(110, 231, 183, 0.5); --p2-color: #fbbf24; --p2-glow: rgba(251, 191, 36, 0.5); --accent: #10b981;
+        }
+        [data-theme="bloodmoon"] {
+            --bg-primary: #140202; --board-light: #7f1d1d; --board-dark: #280505; --board-border: #ef4444;
+            --p1-color: #fca5a5; --p1-glow: rgba(252, 165, 165, 0.5); --p2-color: #dc2626; --p2-glow: rgba(220, 38, 38, 0.5); --accent: #b91c1c;
+        }
+        [data-theme="arcade"] {
+            --bg-primary: #050505; --board-light: #1e293b; --board-dark: #020617; --board-border: #22c55e;
+            --p1-color: #4ade80; --p1-glow: rgba(74, 222, 128, 0.5); --p2-color: #eab308; --p2-glow: rgba(234, 179, 8, 0.5); --accent: #22c55e;
+        }
+        [data-theme="desert"] {
+            --bg-primary: #1c150c; --board-light: #b48a5a; --board-dark: #5c4028; --board-border: #f59e0b;
+            --p1-color: #fde68a; --p1-glow: rgba(253, 230, 138, 0.5); --p2-color: #0284c7; --p2-glow: rgba(2, 132, 199, 0.5); --accent: #d97706;
+        }
+        [data-theme="cyber-yellow"] {
+            --bg-primary: #121204; --board-light: #423f08; --board-dark: #1c1a03; --board-border: #facc15;
+            --p1-color: #facc15; --p1-glow: rgba(250, 204, 21, 0.6); --p2-color: #06b6d4; --p2-glow: rgba(6, 182, 212, 0.6); --accent: #eab308;
+        }
+        [data-theme="amethyst"] {
+            --bg-primary: #13071e; --board-light: #6b21a8; --board-dark: #2e1065; --board-border: #d8b4fe;
+            --p1-color: #e9d5ff; --p1-glow: rgba(233, 213, 255, 0.5); --p2-color: #38bdf8; --p2-glow: rgba(56, 189, 248, 0.5); --accent: #a855f7;
+        }
+        [data-theme="monochrome"] {
+            --bg-primary: #0a0a0a; --board-light: #a3a3a3; --board-dark: #262626; --board-border: #f5f5f5;
+            --p1-color: #ffffff; --p1-glow: rgba(255, 255, 255, 0.5); --p2-color: #525252; --p2-glow: rgba(82, 82, 82, 0.5); --accent: #d4d4d4;
+        }
+        [data-theme="coral"] {
+            --bg-primary: #041819; --board-light: #0f766e; --board-dark: #134e4a; --board-border: #fb7185;
+            --p1-color: #2dd4bf; --p1-glow: rgba(45, 212, 191, 0.5); --p2-color: #fb7185; --p2-glow: rgba(251, 113, 133, 0.5); --accent: #f43f5e;
+        }
+
+        /* Scary Crimson Red Override for Zombie Infection Mode */
+        body.zombie-mode-active {
+            --bg-primary: #1a0205 !important;
+            --board-light: #4c0519 !important;
+            --board-dark: #1f030b !important;
+            --board-border: #dc2626 !important;
+            --p1-color: #84cc16 !important;
+            --p1-glow: rgba(132, 204, 22, 0.6) !important;
+            --p2-color: #ef4444 !important;
+            --p2-glow: rgba(239, 68, 68, 0.6) !important;
+            --accent: #dc2626 !important;
+            background: radial-gradient(circle at center, #3b040c 0%, #140104 75%, #050001 100%) !important;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: #f8fafc;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .font-display {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* 2.5D Chess.com + Tabletop Arcade Perspective */
+        .board-viewport {
+            perspective: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .board-container {
+            width: min(72vw, 68vh);
+            height: min(72vw, 68vh);
+            min-width: 290px;
+            min-height: 290px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+            border: 6px solid var(--board-border);
+            border-radius: 16px;
+            box-shadow: 
+                0 22px 0 -4px #020617,
+                0 28px 50px rgba(0, 0, 0, 0.85),
+                0 0 25px var(--p1-glow);
+            background-color: var(--board-dark);
+            background-image: var(--board-bg-image);
+            background-size: cover;
+            background-position: center;
+        }
+
+        .board-container.view-25d {
+            transform: rotateX(24deg) rotateZ(0deg);
+        }
+
+        .board-container.view-25d.flipped {
+            transform: rotateX(24deg) rotateZ(180deg);
+        }
+
+        .board-container.view-2d {
+            transform: rotateX(0deg) rotateZ(0deg);
+            box-shadow: 0 12px 0 -2px #020617, 0 15px 35px rgba(0,0,0,0.7);
+        }
+
+        .board-container.view-2d.flipped {
+            transform: rotateX(0deg) rotateZ(180deg);
+        }
+
+        .board-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .tile {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s ease, transform 0.15s ease;
+            cursor: pointer;
+        }
+
+        .tile-light {
+            background-color: var(--board-light);
+        }
+
+        .tile-dark {
+            background-color: var(--board-dark);
+        }
+
+        .has-custom-board .tile-light {
+            background-color: rgba(255, 255, 255, 0.16);
+        }
+
+        .has-custom-board .tile-dark {
+            background-color: rgba(0, 0, 0, 0.45);
+        }
+
+        .tile-void {
+            background: radial-gradient(circle, rgba(2,6,23,0.95) 40%, rgba(88,28,135,0.6) 100%) !important;
+            box-shadow: inset 0 0 18px #000000;
+            cursor: not-allowed;
+        }
+
+        .tile.selected {
+            background-color: rgba(250, 204, 21, 0.45) !important;
+            box-shadow: inset 0 0 15px #facc15;
+        }
+
+        .tile.last-move {
+            background-color: rgba(56, 189, 248, 0.28) !important;
+        }
+
+        /* Counter-rotate pieces and hazards when the board flips in PVP */
+        .piece-wrapper, .hazard-wrapper, .coord-label {
+            transition: transform 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
+            width: 86%;
+            height: 86%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .board-container.flipped .piece-wrapper,
+        .board-container.flipped .hazard-wrapper,
+        .board-container.flipped .coord-label {
+            transform: rotateZ(180deg);
+        }
+
+        /* Chess.com style 2.5D layered piece look */
+        .piece-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0px 6px 2px rgba(0, 0, 0, 0.75));
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .tile:hover .piece-svg {
+            transform: translateY(-5px) scale(1.06);
+            filter: drop-shadow(0px 11px 5px rgba(0, 0, 0, 0.85));
+        }
+
+        /* Move indicators */
+        .move-dot {
+            width: 30%;
+            height: 30%;
+            border-radius: 9999px;
+            background-color: rgba(34, 197, 94, 0.85);
+            box-shadow: 0 0 12px #22c55e;
+            z-index: 20;
+            pointer-events: none;
+            animation: pulseDot 1.5s infinite ease-in-out;
+        }
+
+        .capture-ring {
+            position: absolute;
+            inset: 6%;
+            border: 4px solid rgba(239, 68, 68, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.7), inset 0 0 10px rgba(239, 68, 68, 0.4);
+            z-index: 20;
+            pointer-events: none;
+            animation: pulseRing 1.2s infinite ease-in-out;
+        }
+
+        .ability-ring {
+            position: absolute;
+            inset: 8%;
+            border: 3px dashed rgba(56, 189, 248, 0.95);
+            border-radius: 50%;
+            box-shadow: 0 0 14px rgba(56, 189, 248, 0.8);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        /* Enemy Threat Path Scouting Indicators */
+        .enemy-move-dot {
+            width: 28%;
+            height: 28%;
+            border-radius: 9999px;
+            background-color: rgba(249, 115, 22, 0.85);
+            border: 2px solid #fdba74;
+            box-shadow: 0 0 12px #f97316;
+            z-index: 20;
+            pointer-events: none;
+            animation: pulseDot 1.2s infinite ease-in-out;
+        }
+
+        .enemy-capture-ring {
+            position: absolute;
+            inset: 8%;
+            border: 3px dashed rgba(249, 115, 22, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 0 14px rgba(249, 115, 22, 0.7), inset 0 0 8px rgba(249, 115, 22, 0.4);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .tile.selected-enemy {
+            background-color: rgba(249, 115, 22, 0.45) !important;
+            box-shadow: inset 0 0 15px #f97316;
+        }
+
+        /* Incoming Airstrike Target Flashing Red Circles */
+        @keyframes airstrikeFlash {
+            0%, 100% { transform: scale(0.86); opacity: 1; box-shadow: 0 0 22px #ef4444, inset 0 0 14px #ef4444; }
+            50% { transform: scale(1.06); opacity: 0.35; box-shadow: 0 0 8px #dc2626; }
+        }
+
+        .airstrike-target-circle {
+            position: absolute;
+            inset: 6%;
+            border: 4px solid #ef4444;
+            border-radius: 9999px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.45) 0%, transparent 70%);
+            z-index: 30;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: airstrikeFlash 0.35s infinite ease-in-out;
+        }
+
+        .airstrike-target-circle::after {
+            content: '🎯';
+            font-size: 1.15rem;
+        }
+
+        /* Cool Pop-up Animation for Commander Transmission */
+        @keyframes commanderPopIn {
+            0% { transform: translate(-50%, 50px) scale(0.75); opacity: 0; }
+            65% { transform: translate(-50%, -6px) scale(1.04); opacity: 1; }
+            100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+        }
+
+        .commander-pop-anim {
+            animation: commanderPopIn 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Bombing Jet Flyover Animation */
+        @keyframes jetFlyover {
+            0% { transform: translate(-25vw, 30vh) scale(0.9) rotate(-18deg); opacity: 1; }
+            100% { transform: translate(115vw, -35vh) scale(1.25) rotate(-18deg); opacity: 1; }
+        }
+
+        .jet-flyover-active {
+            animation: jetFlyover 1.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+
+        @keyframes pulseRing {
+            0%, 100% { transform: scale(0.96); }
+            50% { transform: scale(1.03); }
+        }
+
+        @keyframes floatAnim {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-4px); }
+        }
+
+        .floating-hazard {
+            animation: floatAnim 2.4s infinite ease-in-out;
+        }
+
+        @keyframes shakeBoard {
+            0%, 100% { transform: translate(0, 0); }
+            20% { transform: translate(-8px, 6px); }
+            40% { transform: translate(8px, -6px); }
+            60% { transform: translate(-6px, -4px); }
+            80% { transform: translate(6px, 4px); }
+        }
+
+        .shake-effect {
+            animation: shakeBoard 0.45s ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.4);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between relative selection:bg-sky-500 selection:text-white">
+
+    <!-- Dynamic Background Canvas / Custom Image Layer -->
+    <div id="customBgLayer" class="fixed inset-0 bg-cover bg-center z-0 opacity-35 pointer-events-none transition-opacity duration-500"></div>
+    <div id="zombieRedVignette" class="fixed inset-0 z-0 pointer-events-none hidden bg-[radial-gradient(circle_at_center,transparent_25%,rgba(220,38,38,0.45)_100%)] animate-pulse"></div>
+    <canvas id="bgCanvas" class="fixed inset-0 z-0 pointer-events-none opacity-60"></canvas>
+
+    <!-- INCOMING AIRSTRIKE Warning Banner -->
+    <div id="airstrikeWarningBanner" class="fixed top-20 left-1/2 -translate-x-1/2 z-50 pointer-events-none hidden flex-col items-center">
+        <div class="px-6 py-2.5 rounded-2xl bg-red-950/95 border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.95)] animate-bounce flex items-center gap-3">
+            <span class="text-2xl">🚨</span>
+            <span class="font-display font-black text-lg sm:text-2xl tracking-widest text-red-400 drop-shadow-[0_0_10px_#ef4444]">
+                ⚠️ INCOMING AIRSTRIKE ⚠️
+            </span>
+            <span class="text-2xl">✈️</span>
+        </div>
+    </div>
+
+    <!-- Bombing Jet Visual Overlay -->
+    <div id="jetFlyoverContainer" class="fixed inset-0 z-40 pointer-events-none overflow-hidden hidden">
+        <div id="jetSprite" class="w-40 h-40 text-amber-400 drop-shadow-[0_0_25px_rgba(249,115,22,0.95)]">
+            <svg viewBox="0 0 100 100" class="w-full h-full">
+                <polygon points="95,50 55,42 20,12 12,15 30,45 8,42 4,48 18,50 4,52 8,58 30,55 12,85 20,88 55,58" fill="#cbd5e1" stroke="#f97316" stroke-width="2.5"/>
+                <polygon points="80,50 60,46 60,54" fill="#38bdf8"/>
+                <circle cx="8" cy="46" r="5" fill="#f97316"/>
+                <circle cx="8" cy="54" r="5" fill="#f97316"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Top Navigation Bar -->
+    <header class="relative z-20 w-full bg-slate-900/80 backdrop-blur-md border-b border-slate-700/70 px-3 py-2.5">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <!-- Brand Title with Sovereign King Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-500 to-purple-600 flex items-center justify-center shadow-lg shadow-sky-500/20 border-2 border-amber-400 p-1">
+                    <svg class="w-full h-full drop-shadow" viewBox="0 0 100 100">
+                        <path d="M16 85 C16 58, 30 50, 50 50 C70 50, 84 58, 84 85 Z" fill="#38bdf8" stroke="#facc15" stroke-width="4"/>
+                        <circle cx="50" cy="36" r="14" fill="#38bdf8" stroke="#facc15" stroke-width="4"/>
+                        <path d="M42 34 L58 34 L55 41 L45 41 Z" fill="#e0f2fe"/>
+                        <polygon points="33,24 38,9 46,18 50,6 54,18 62,9 67,24" fill="#facc15" stroke="#ffffff" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-display font-black text-lg sm:text-xl tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-amber-300 via-sky-400 to-purple-400">
+                        BETTER CHESS
+                    </h1>
+                    <p class="text-[11px] text-slate-400 hidden sm:block">2.5D Upgraded Tactical & Classic Chess Arena</p>
+                </div>
+            </div>
+
+            <!-- Quick Controls -->
+            <div class="flex items-center flex-wrap gap-1.5 sm:gap-2">
+                <!-- Game Mode Pill -->
+                <button id="modeBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-semibold flex items-center gap-1.5 transition shadow">
+                    <span id="modeIcon">🤖</span>
+                    <span id="modeLabel">VS AI (Med)</span>
+                </button>
+
+                <!-- Normal Chess vs Better Chess Toggle -->
+                <button id="classicChessToggleBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-amber-950/70 border border-slate-600 text-xs font-bold flex items-center gap-1.5 transition shadow" title="Switch between Upgraded Better Chess rules and Classic Normal Chess rules">
+                    <span>♟️</span>
+                    <span id="classicChessBtnText">Rules: Better Chess</span>
+                </button>
+
+                <!-- Zombie Infection Mode Toggle -->
+                <button id="zombieToggleBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-red-950/80 border border-slate-600 text-xs font-bold flex items-center gap-1.5 transition shadow" title="Toggle Zombie Mode: Captured enemy pieces turn into your own pieces!">
+                    <span>🧟</span>
+                    <span id="zombieBtnText">Zombie: OFF</span>
+                </button>
+
+                <!-- 2.5D / 2D Camera Toggle -->
+                <button id="cameraToggleBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-semibold transition shadow" title="Toggle 2.5D or 2D Top-Down View">
+                    📐 2.5D View
+                </button>
+
+                <!-- Studio / Customizer Modal Button -->
+                <button id="openStudioBtn" class="px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-md shadow-purple-600/30 transition">
+                    <span>🎨</span>
+                    <span>Themes & Custom Upload</span>
+                </button>
+
+                <!-- Piece Guide Button -->
+                <button id="openGuideBtn" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-xs font-semibold flex items-center gap-1 transition">
+                    <span>📖</span>
+                    <span class="hidden md:inline">Codex & Rules</span>
+                </button>
+
+                <!-- Music Toggle (Auto-ON by default) -->
+                <button id="musicToggleBtn" class="p-1.5 rounded-lg bg-sky-500/20 hover:bg-slate-700 border border-sky-400 text-xs transition" title="Toggle Background Synth/Music">
+                    🎵
+                </button>
+
+                <!-- New Match -->
+                <button id="resetGameBtn" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white text-xs font-bold transition shadow-md shadow-sky-600/30">
+                    ↻ Restart
+                </button>
+
+                <!-- Cancel Game Button -->
+                <button id="cancelGameBtn" class="px-3 py-1.5 rounded-lg bg-rose-700 hover:bg-rose-600 text-white text-xs font-bold transition shadow-md shadow-rose-700/30">
+                    ✕ Cancel Game
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Commander Tactical Suggestion Transmission Toast -->
+    <div id="commanderBanner" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 max-w-xl w-[94%] bg-slate-950/95 border-2 border-emerald-400 rounded-2xl p-3.5 shadow-[0_0_30px_rgba(16,185,129,0.5)] hidden items-center gap-3.5 backdrop-blur-md">
+        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-400 flex items-center justify-center shrink-0 text-2xl shadow-inner animate-bounce">
+            🎖️
+        </div>
+        <div class="flex-1 text-xs">
+            <div class="flex items-center gap-2">
+                <span class="font-display font-bold text-emerald-400 uppercase tracking-wider">Commander Orion // Incoming Comms</span>
+                <span id="commanderSituationBadge" class="px-1.5 py-0.5 text-[10px] rounded bg-emerald-500/20 text-emerald-300 font-mono">TACTICAL ADVICE</span>
+            </div>
+            <p id="commanderMessage" class="text-slate-100 mt-1 font-medium leading-snug min-h-[2.2rem]">
+                "Commander on comms! Execute this strike now to seize control!"
+            </p>
+        </div>
+        <div class="flex flex-col gap-1">
+            <button id="execCommanderMoveBtn" class="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-[11px] transition">
+                Do Move
+            </button>
+            <button id="closeCommanderBtn" class="px-2.5 py-0.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 text-[10px]">
+                Dismiss
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Game Content Area -->
+    <main id="mainShakeArea" class="relative z-10 flex-1 max-w-7xl w-full mx-auto px-2 sm:px-4 py-2 flex flex-col lg:flex-row items-center justify-center gap-4">
+
+        <!-- Left Sidebar: Turn Status, AI Settings & Event Forecast -->
+        <aside class="w-full lg:w-72 flex flex-col gap-3 order-2 lg:order-1">
+            <!-- Active Turn & Match Card -->
+            <div class="bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-2xl p-3.5 shadow-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Battle Status</span>
+                    <span id="turnCounterBadge" class="px-2 py-0.5 text-[11px] rounded-full bg-slate-800 border border-slate-600 font-mono text-sky-400">Turn 1</span>
+                </div>
+
+                <div id="turnBanner" class="p-3 rounded-xl bg-gradient-to-r from-sky-500/20 to-blue-600/10 border border-sky-400/40 flex items-center gap-3 transition-all">
+                    <div id="turnDot" class="w-4 h-4 rounded-full bg-sky-400 shadow-[0_0_12px_#38bdf8]"></div>
+                    <div>
+                        <div id="turnTitle" class="font-display font-bold text-sm text-white">SOLAR VANGUARD</div>
+                        <div id="turnSubtitle" class="text-xs text-slate-300">Player 1's Turn to Move</div>
+                    </div>
+                </div>
+
+                <!-- Check / Danger Alert -->
+                <div id="dangerBanner" class="hidden mt-2.5 px-3 py-2 rounded-xl bg-rose-500/20 border border-rose-500 text-rose-200 text-xs font-bold flex items-center gap-2 animate-pulse">
+                    <span>⚠️</span>
+                    <span id="dangerText">SOVEREIGN IN DANGER!</span>
+                </div>
+
+                <!-- PVP Auto-Flip Toggle -->
+                <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-xs text-slate-300">
+                    <span>Auto-Flip Board (PVP)</span>
+                    <input type="checkbox" id="autoFlipToggle" checked class="w-4 h-4 accent-sky-500 rounded cursor-pointer">
+                </div>
+            </div>
+
+            <!-- Cataclysm Event Radar Card -->
+            <div class="bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-2xl p-3.5 shadow-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-base">☄️</span>
+                        <h2 class="font-display font-bold text-xs uppercase tracking-wider text-purple-300">Rift Cataclysms</h2>
+                    </div>
+                    <select id="eventFreqSelect" class="bg-slate-800 border border-slate-600 rounded-lg px-2 py-0.5 text-[11px] text-slate-200">
+                        <option value="3">Chaos (3 Turns)</option>
+                        <option value="4" selected>Normal (4 Turns)</option>
+                        <option value="6">Calm (6 Turns)</option>
+                        <option value="0">Off (No Events)</option>
+                    </select>
+                </div>
+
+                <!-- Progress bar until next random event -->
+                <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden mb-2 border border-slate-700">
+                    <div id="eventProgressBar" class="bg-gradient-to-r from-amber-500 via-rose-500 to-purple-600 h-full w-1/4 transition-all duration-300"></div>
+                </div>
+                <p id="eventCountdownText" class="text-[11px] text-slate-300 mb-2.5">
+                    Next anomaly spawns in <span class="text-amber-400 font-bold">3</span> turns.
+                </p>
+
+                <!-- Active Board Anomalies List -->
+                <div id="activeEventsList" class="space-y-1.5 max-h-32 overflow-y-auto pr-1 text-xs">
+                    <div class="text-slate-500 italic text-[11px]">No active hazards on the board yet...</div>
+                </div>
+
+                <!-- Trigger Instant Event Buttons -->
+                <div class="grid grid-cols-2 gap-1.5 mt-2.5">
+                    <button id="forceEventBtn" class="py-1.5 px-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-300 text-[11px] font-semibold transition flex items-center justify-center gap-1">
+                        <span>⚡</span> Random Event
+                    </button>
+                    <button id="forceAirstrikeBtn" class="py-1.5 px-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/50 text-rose-300 text-[11px] font-semibold transition flex items-center justify-center gap-1">
+                        <span>✈️</span> Jet Airstrike
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reinforcement Drop-Pod Queue (45s Respawn Timer) -->
+            <div class="bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-2xl p-3.5 shadow-xl">
+                <div class="flex items-center justify-between mb-1.5">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-base">🪂</span>
+                        <h2 class="font-display font-bold text-xs uppercase tracking-wider text-sky-300">Reinforce Pods (45s)</h2>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400">Auto-Respawn</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mb-2">
+                    Fallen units redeploy to your home rows after <span class="text-sky-300 font-semibold">45 seconds</span>!
+                </p>
+                <div id="reinforceQueueList" class="space-y-1.5 max-h-28 overflow-y-auto pr-1 text-xs">
+                    <div class="text-slate-500 italic text-[11px]">No fallen units in orbital queue...</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center: 2.5D Interactive Board -->
+        <section class="order-1 lg:order-2 flex flex-col items-center justify-center">
+            <!-- Top Player Bar -->
+            <div class="w-full max-w-[min(72vw,68vh)] flex items-center justify-between px-3 py-1.5 mb-1 rounded-xl bg-slate-900/80 border border-slate-700/70 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-rose-500 inline-block shadow-[0_0_8px_#f43f5e]"></span>
+                    <span id="topPlayerName" class="font-bold text-slate-200">Crimson Syndicate (Bot)</span>
+                </div>
+                <div id="capturedByTop" class="flex items-center gap-1 text-slate-400 font-mono text-[11px]">
+                    Captured: 0
+                </div>
+            </div>
+
+            <!-- 2.5D Viewport -->
+            <div class="board-viewport">
+                <div id="boardContainer" class="board-container view-25d">
+                    <div id="boardGrid" class="board-grid"></div>
+                </div>
+            </div>
+
+            <!-- Bottom Player Bar -->
+            <div class="w-full max-w-[min(72vw,68vh)] flex items-center justify-between px-3 py-1.5 mt-2 rounded-xl bg-slate-900/80 border border-slate-700/70 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-sky-400 inline-block shadow-[0_0_8px_#38bdf8]"></span>
+                    <span id="bottomPlayerName" class="font-bold text-slate-200">Solar Vanguard (P1)</span>
+                </div>
+                <div id="capturedByBottom" class="flex items-center gap-1 text-slate-400 font-mono text-[11px]">
+                    Captured: 0
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Sidebar: Selected Piece Inspector & Battle Feed -->
+        <aside class="w-full lg:w-72 flex flex-col gap-3 order-3">
+            <!-- Selected Unit / Hazard Inspector -->
+            <div class="bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-2xl p-3.5 shadow-xl min-h-[155px] flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tactical Scanner</span>
+                        <span id="inspectorCoord" class="text-[11px] font-mono text-sky-400 px-1.5 py-0.5 bg-slate-800 rounded">--</span>
+                    </div>
+                    <h3 id="inspectorTitle" class="font-display font-bold text-sm text-white">Select a Unit or Tile</h3>
+                    <p id="inspectorDesc" class="text-xs text-slate-300 mt-1 leading-relaxed">
+                        Click any piece on the board to inspect its unique movement pattern, special passives, or hazard duration.
+                    </p>
+                </div>
+                <div id="inspectorTags" class="flex flex-wrap gap-1 mt-2 pt-2 border-t border-slate-800/80">
+                    <span class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-400">Tip: Press ESC at any time to unselect a piece!</span>
+                </div>
+            </div>
+
+            <!-- Live Combat & Event Feed -->
+            <div class="bg-slate-900/85 backdrop-blur-md border border-slate-700/80 rounded-2xl p-3.5 shadow-xl flex-1 flex flex-col justify-between min-h-[210px]">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Battle Feed</span>
+                        <button id="undoBtn" class="px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] text-sky-400 font-semibold transition">
+                            ↶ Undo Move
+                        </button>
+                    </div>
+                    <div id="battleLog" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 text-xs font-mono"></div>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <!-- MODAL 1: Themes & Custom Media Studio -->
+    <div id="studioModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-5 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">🎨</span>
+                    <h2 class="font-display font-bold text-lg text-white">Better Chess Theme & Media Studio</h2>
+                </div>
+                <button id="closeStudioBtn" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">✕</button>
+            </div>
+
+            <div class="space-y-5 text-xs">
+                <!-- Game Mode Selector -->
+                <div>
+                    <label class="block font-bold text-slate-300 uppercase tracking-wider text-xs mb-2">1. Select Opponent / Game Mode</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button data-mode="ai-easy" class="mode-option p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:border-sky-400 text-left transition">
+                            <div class="font-bold text-white">🤖 Scout Bot</div>
+                            <div class="text-[11px] text-slate-400">Casual AI</div>
+                        </button>
+                        <button data-mode="ai-med" class="mode-option p-2.5 rounded-xl bg-sky-500/20 border border-sky-400 text-left transition">
+                            <div class="font-bold text-white">🧠 Tactician Bot</div>
+                            <div class="text-[11px] text-slate-300">Balanced AI</div>
+                        </button>
+                        <button data-mode="ai-hard" class="mode-option p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:border-sky-400 text-left transition">
+                            <div class="font-bold text-white">👑 Grandmaster</div>
+                            <div class="text-[11px] text-slate-400">Deep Minimax AI</div>
+                        </button>
+                        <button data-mode="pvp" class="mode-option p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:border-sky-400 text-left transition">
+                            <div class="font-bold text-white">⚔️ Local PVP</div>
+                            <div class="text-[11px] text-slate-400">2-Player Flip</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Built-in Visual Themes (Scrollable 20-Theme Gallery) -->
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block font-bold text-slate-300 uppercase tracking-wider text-xs">2. Built-In Arena Themes (Scroll Down for 20 Themes)</label>
+                        <span class="text-[11px] text-sky-400 font-mono">↕ Scrollable List</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto p-1.5 rounded-xl bg-slate-950/60 border border-slate-800">
+                        <button data-theme-choice="cyber" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-sky-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-sky-400"></span><span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span><span class="w-3.5 h-3.5 rounded-full bg-slate-700"></span></div>
+                            <span class="font-bold text-white text-xs">1. Cyber Grid</span>
+                        </button>
+                        <button data-theme-choice="magma" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-orange-500 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-yellow-400"></span><span class="w-3.5 h-3.5 rounded-full bg-red-500"></span><span class="w-3.5 h-3.5 rounded-full bg-amber-900"></span></div>
+                            <span class="font-bold text-white text-xs">2. Obsidian Magma</span>
+                        </button>
+                        <button data-theme-choice="celestial" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-amber-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-blue-600"></span><span class="w-3.5 h-3.5 rounded-full bg-purple-600"></span><span class="w-3.5 h-3.5 rounded-full bg-slate-200"></span></div>
+                            <span class="font-bold text-white text-xs">3. Celestial Marble</span>
+                        </button>
+                        <button data-theme-choice="toxic" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-emerald-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-emerald-400"></span><span class="w-3.5 h-3.5 rounded-full bg-purple-400"></span><span class="w-3.5 h-3.5 rounded-full bg-emerald-950"></span></div>
+                            <span class="font-bold text-white text-xs">4. Bio-Luminescent</span>
+                        </button>
+                        <button data-theme-choice="synthwave" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-pink-500 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-teal-300"></span><span class="w-3.5 h-3.5 rounded-full bg-pink-500"></span><span class="w-3.5 h-3.5 rounded-full bg-purple-900"></span></div>
+                            <span class="font-bold text-white text-xs">5. Neon Synthwave</span>
+                        </button>
+                        <button data-theme-choice="royal" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-amber-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-yellow-300"></span><span class="w-3.5 h-3.5 rounded-full bg-slate-300"></span><span class="w-3.5 h-3.5 rounded-full bg-amber-900"></span></div>
+                            <span class="font-bold text-white text-xs">6. Royal Gold</span>
+                        </button>
+                        <button data-theme-choice="frost" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-sky-300 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-sky-100"></span><span class="w-3.5 h-3.5 rounded-full bg-sky-400"></span><span class="w-3.5 h-3.5 rounded-full bg-sky-900"></span></div>
+                            <span class="font-bold text-white text-xs">7. Arctic Frost</span>
+                        </button>
+                        <button data-theme-choice="sakura" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-pink-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-pink-200"></span><span class="w-3.5 h-3.5 rounded-full bg-rose-400"></span><span class="w-3.5 h-3.5 rounded-full bg-pink-900"></span></div>
+                            <span class="font-bold text-white text-xs">8. Sakura Blossom</span>
+                        </button>
+                        <button data-theme-choice="classic-wood" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-amber-600 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-amber-100"></span><span class="w-3.5 h-3.5 rounded-full bg-stone-800"></span><span class="w-3.5 h-3.5 rounded-full bg-amber-700"></span></div>
+                            <span class="font-bold text-white text-xs">9. Classic Wood</span>
+                        </button>
+                        <button data-theme-choice="midnight" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-violet-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-violet-300"></span><span class="w-3.5 h-3.5 rounded-full bg-pink-500"></span><span class="w-3.5 h-3.5 rounded-full bg-violet-950"></span></div>
+                            <span class="font-bold text-white text-xs">10. Midnight Velvet</span>
+                        </button>
+                        <button data-theme-choice="solar" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-yellow-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-yellow-200"></span><span class="w-3.5 h-3.5 rounded-full bg-orange-500"></span><span class="w-3.5 h-3.5 rounded-full bg-orange-950"></span></div>
+                            <span class="font-bold text-white text-xs">11. Solar Flare</span>
+                        </button>
+                        <button data-theme-choice="abyss" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-cyan-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-cyan-300"></span><span class="w-3.5 h-3.5 rounded-full bg-rose-500"></span><span class="w-3.5 h-3.5 rounded-full bg-cyan-950"></span></div>
+                            <span class="font-bold text-white text-xs">12. Ocean Abyss</span>
+                        </button>
+                        <button data-theme-choice="emerald" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-emerald-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-emerald-300"></span><span class="w-3.5 h-3.5 rounded-full bg-amber-400"></span><span class="w-3.5 h-3.5 rounded-full bg-emerald-900"></span></div>
+                            <span class="font-bold text-white text-xs">13. Emerald Dynasty</span>
+                        </button>
+                        <button data-theme-choice="bloodmoon" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-red-500 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-red-300"></span><span class="w-3.5 h-3.5 rounded-full bg-red-600"></span><span class="w-3.5 h-3.5 rounded-full bg-red-950"></span></div>
+                            <span class="font-bold text-white text-xs">14. Blood Moon</span>
+                        </button>
+                        <button data-theme-choice="arcade" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-green-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-green-400"></span><span class="w-3.5 h-3.5 rounded-full bg-yellow-400"></span><span class="w-3.5 h-3.5 rounded-full bg-slate-900"></span></div>
+                            <span class="font-bold text-white text-xs">15. Retro Arcade</span>
+                        </button>
+                        <button data-theme-choice="desert" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-amber-500 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-amber-200"></span><span class="w-3.5 h-3.5 rounded-full bg-sky-500"></span><span class="w-3.5 h-3.5 rounded-full bg-amber-800"></span></div>
+                            <span class="font-bold text-white text-xs">16. Desert Mirage</span>
+                        </button>
+                        <button data-theme-choice="cyber-yellow" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-yellow-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-yellow-400"></span><span class="w-3.5 h-3.5 rounded-full bg-cyan-400"></span><span class="w-3.5 h-3.5 rounded-full bg-neutral-900"></span></div>
+                            <span class="font-bold text-white text-xs">17. Cyber Yellow</span>
+                        </button>
+                        <button data-theme-choice="amethyst" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-purple-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-purple-200"></span><span class="w-3.5 h-3.5 rounded-full bg-sky-400"></span><span class="w-3.5 h-3.5 rounded-full bg-purple-900"></span></div>
+                            <span class="font-bold text-white text-xs">18. Amethyst Crystal</span>
+                        </button>
+                        <button data-theme-choice="monochrome" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-white flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-white"></span><span class="w-3.5 h-3.5 rounded-full bg-neutral-600"></span><span class="w-3.5 h-3.5 rounded-full bg-neutral-900"></span></div>
+                            <span class="font-bold text-white text-xs">19. Monochrome Noir</span>
+                        </button>
+                        <button data-theme-choice="coral" class="theme-btn p-2.5 rounded-xl bg-slate-800 border-2 border-transparent hover:border-rose-400 flex flex-col gap-1 text-left">
+                            <div class="flex gap-1"><span class="w-3.5 h-3.5 rounded-full bg-teal-300"></span><span class="w-3.5 h-3.5 rounded-full bg-rose-400"></span><span class="w-3.5 h-3.5 rounded-full bg-teal-950"></span></div>
+                            <span class="font-bold text-white text-xs">20. Coral Reef</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Color Theme Creator -->
+                <div class="p-3.5 rounded-xl bg-slate-800/75 border border-slate-700">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="font-bold text-white text-xs uppercase tracking-wider">🎨 Custom Color Theme Creator</div>
+                        <button id="applyCustomColorsBtn" class="px-3 py-1 rounded-lg bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition">
+                            Apply Custom Colors
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-[11px]">
+                        <label class="flex flex-col gap-1 text-slate-300">
+                            <span>Background</span>
+                            <input type="color" id="customColorBg" value="#0b0f19" class="w-full h-8 rounded cursor-pointer bg-slate-900 border border-slate-600">
+                        </label>
+                        <label class="flex flex-col gap-1 text-slate-300">
+                            <span>Light Tiles</span>
+                            <input type="color" id="customColorLight" value="#334155" class="w-full h-8 rounded cursor-pointer bg-slate-900 border border-slate-600">
+                        </label>
+                        <label class="flex flex-col gap-1 text-slate-300">
+                            <span>Dark Tiles</span>
+                            <input type="color" id="customColorDark" value="#0f172a" class="w-full h-8 rounded cursor-pointer bg-slate-900 border border-slate-600">
+                        </label>
+                        <label class="flex flex-col gap-1 text-slate-300">
+                            <span>Board Frame</span>
+                            <input type="color" id="customColorBorder" value="#38bdf8" class="w-full h-8 rounded cursor-pointer bg-slate-900 border border-slate-600">
+                        </label>
+                        <label class="flex flex-col gap-1 text-slate-300">
+                            <span>Player 1 Units</span>
+                            <input type="color" id="customColorP1" value="#38bdf8" class="w-full h-8 rounded cursor-pointer bg-slate-900 border border-slate-600">
+                        </label>
+                        <label class="flex flex-col gap-1 text-slate-300">
+                            <span>Player 2 Units</span>
+                            <input type="color" id="customColorP2" value="#f43f5e" class="w-full h-8 rounded cursor-pointer bg-slate-900 border border-slate-600">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Custom Image Uploads (Wallpaper & Chessboard Texture) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+                    <div class="p-3 rounded-xl bg-slate-800/70 border border-slate-700">
+                        <div class="font-bold text-white mb-1">🖼️ Custom Room Background</div>
+                        <p class="text-[11px] text-slate-400 mb-2">Upload any image from your Chromebook/PC as the game backdrop.</p>
+                        <input type="file" id="bgImageInput" accept="image/*" class="block w-full text-xs text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-sky-600 file:text-white hover:file:bg-sky-500 cursor-pointer">
+                        <button id="clearBgImageBtn" class="mt-2 text-[11px] text-rose-400 hover:underline">Reset to Animated Nebula</button>
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-slate-800/70 border border-slate-700">
+                        <div class="font-bold text-white mb-1">♟️ Custom Board Surface Image</div>
+                        <p class="text-[11px] text-slate-400 mb-2">Upload a custom texture or photo to skin the 8x8 chessboard.</p>
+                        <input type="file" id="boardImageInput" accept="image/*" class="block w-full text-xs text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-500 cursor-pointer">
+                        <button id="clearBoardImageBtn" class="mt-2 text-[11px] text-rose-400 hover:underline">Reset Board Surface</button>
+                    </div>
+                </div>
+
+                <!-- Custom Audio Uploads (Music & Sound Effects) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+                    <div class="p-3 rounded-xl bg-slate-800/70 border border-slate-700">
+                        <div class="font-bold text-white mb-1">🎵 Background Music</div>
+                        <p class="text-[11px] text-slate-400 mb-2">Choose built-in synth tracks or upload your own MP3/WAV loop.</p>
+                        <div class="flex gap-2 mb-2">
+                            <select id="bgmPresetSelect" class="bg-slate-900 border border-slate-600 rounded-lg px-2 py-1 text-xs text-white flex-1">
+                                <option value="cyber">Built-in: Cyber Pulse Arpeggio</option>
+                                <option value="orbital">Built-in: Orbital Calm Drift</option>
+                                <option value="boss">Built-in: Boss Rift Tempo</option>
+                                <option value="custom">Uploaded Audio File</option>
+                            </select>
+                        </div>
+                        <input type="file" id="bgmAudioInput" accept="audio/*" class="block w-full text-xs text-slate-300 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-emerald-600 file:text-white hover:file:bg-emerald-500 cursor-pointer">
+                    </div>
+
+                    <div class="p-3 rounded-xl bg-slate-800/70 border border-slate-700">
+                        <div class="font-bold text-white mb-1">🔊 Custom Sound Effects</div>
+                        <p class="text-[11px] text-slate-400 mb-2">Upload custom audio clips for captures or meteor cataclysms!</p>
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-[11px] text-slate-300">Capture SFX:</span>
+                                <input type="file" id="captureSfxInput" accept="audio/*" class="text-[11px] text-slate-400 w-44 file:py-0.5 file:px-2 file:rounded file:border-0 file:bg-slate-700 file:text-white">
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="text-[11px] text-slate-300">Cataclysm SFX:</span>
+                                <input type="file" id="eventSfxInput" accept="audio/*" class="text-[11px] text-slate-400 w-44 file:py-0.5 file:px-2 file:rounded file:border-0 file:bg-slate-700 file:text-white">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-5 pt-3 border-t border-slate-800 flex justify-end">
+                <button id="doneStudioBtn" class="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-sm transition">
+                    Save & Return to Battle
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Piece Guide & Cataclysm Rules -->
+    <div id="guideModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-5 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">📖</span>
+                    <h2 class="font-display font-bold text-lg text-white">TactiCore Codex: Units & Cataclysms</h2>
+                </div>
+                <button id="closeGuideBtn" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold">✕</button>
+            </div>
+
+            <div class="space-y-4 text-xs sm:text-sm text-slate-300">
+                <p class="bg-slate-800/80 border border-slate-700 p-3 rounded-xl">
+                    <strong class="text-sky-400">Victory Condition:</strong> Capture the enemy <strong class="text-white">Sovereign (Core King)</strong> or leave your opponent with no legal moves! Unlike normal chess, every piece has upgraded tactical abilities and the board mutates with cosmic events.
+                </p>
+
+                <h3 class="font-display font-bold text-sm text-sky-400 uppercase tracking-wider">⚡ Custom Tactical Units</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                    <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700">
+                        <div class="font-bold text-white">🛡️ Vanguard (Upgraded Pawn)</div>
+                        <p class="text-xs text-slate-400 mt-1">Moves 1 step forward OR sideways (2 steps forward on start row). Captures 1 step diagonally forward. Promotes to Archon at the far edge.</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700">
+                        <div class="font-bold text-white">🏛️ Bastion (Juggernaut Rook)</div>
+                        <p class="text-xs text-slate-400 mt-1">Slides horizontally & vertically. <strong>Meteor Proof:</strong> Falling meteors cannot destroy a Bastion, and it can smash through Crystal Spikes!</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700">
+                        <div class="font-bold text-white">🐎 Phase Strider (Agile Leaper)</div>
+                        <p class="text-xs text-slate-400 mt-1">Jumps in an L-shape (like a Knight) OR leaps exactly 2 tiles orthogonally over obstacles.</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700">
+                        <div class="font-bold text-white">🔮 Warp Mage (Diagonal Teleporter)</div>
+                        <p class="text-xs text-slate-400 mt-1">Slides diagonally. <strong>Special Ability:</strong> Can warp-swap positions with any friendly unit within 2 tiles!</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700">
+                        <div class="font-bold text-white">👸 Archon (Star Queen)</div>
+                        <p class="text-xs text-slate-400 mt-1">Crowned with a floating Star Halo! Slides up to 3 tiles in any direction AND can make L-shape knight jumps.</p>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700">
+                        <div class="font-bold text-white">🤴 Sovereign (Armored Monarch)</div>
+                        <p class="text-xs text-slate-400 mt-1">Humanoid Commander with a golden visor & royal crown! Steps 1 tile any way or dashes 2 tiles orthogonally.</p>
+                    </div>
+                </div>
+
+                <h3 class="font-display font-bold text-sm text-amber-400 uppercase tracking-wider pt-2">☄️ Dynamic Arena Cataclysms & Modes</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div class="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30">
+                        <div class="font-bold text-rose-300">✈️ Bombing Jet Airstrike</div>
+                        <p class="text-xs text-slate-300">Strike fighters scream across the board and carpet-bomb a tactical run, destroying exposed pieces (except Sovereigns & Bastions)!</p>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-lime-500/10 border border-lime-500/30">
+                        <div class="font-bold text-lime-300">🧟 Zombie Infection Mode</div>
+                        <p class="text-xs text-slate-300">Turns the arena blood-red! Whenever you capture an enemy unit, it mutates into your own team's unit on your back rank!</p>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
+                        <div class="font-bold text-amber-300">☄️ Meteor Impact</div>
+                        <p class="text-xs text-slate-300">Strikes a random tile! Vaporizes any piece standing there (except Bastions & Sovereigns) and leaves a scorched crater for several turns.</p>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/30">
+                        <div class="font-bold text-purple-300">💎 Crystal Spike</div>
+                        <p class="text-xs text-slate-300">Erupts from the ground, blocking movement onto or past that tile until it shatters a few turns later.</p>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-cyan-500/10 border border-cyan-500/30">
+                        <div class="font-bold text-cyan-300">❄️ Cryo Freeze</div>
+                        <p class="text-xs text-slate-300">Freezes a random unit in solid ice for 2 turns—it cannot move or be captured until thawed!</p>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                        <div class="font-bold text-emerald-300">🪂 45s Reinforcements</div>
+                        <p class="text-xs text-slate-300">Lost a unit? It enters the Reinforce Pod queue and automatically drops back onto your side after 45 seconds!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: Game Canceled / Main Standby Lobby -->
+    <div id="cancelModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-rose-500 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl">
+            <div class="text-5xl mb-3">🛑</div>
+            <h2 class="font-display font-black text-2xl text-white mb-1">MATCH CANCELED</h2>
+            <p class="text-xs sm:text-sm text-slate-300 mb-5">
+                Current battle operations have been aborted and all reinforcement timers halted. Select your next deployment mode below:
+            </p>
+            <div class="grid grid-cols-2 gap-2.5 mb-4 text-xs">
+                <button data-quick-start="ai-med" class="quick-start-btn p-3 rounded-xl bg-slate-800 hover:bg-sky-500/20 border border-slate-700 hover:border-sky-400 font-bold text-white transition">
+                    🤖 VS Bot (Normal)
+                </button>
+                <button data-quick-start="pvp" class="quick-start-btn p-3 rounded-xl bg-slate-800 hover:bg-purple-500/20 border border-slate-700 hover:border-purple-400 font-bold text-white transition">
+                    ⚔️ Local PVP (Flip)
+                </button>
+                <button data-quick-start="zombie-ai" class="quick-start-btn p-3 rounded-xl bg-red-950/60 hover:bg-red-900/50 border border-red-600/60 font-bold text-red-200 transition">
+                    🧟 Zombie VS Bot
+                </button>
+                <button data-quick-start="zombie-pvp" class="quick-start-btn p-3 rounded-xl bg-red-950/60 hover:bg-red-900/50 border border-red-600/60 font-bold text-red-200 transition">
+                    🧟 Zombie PVP
+                </button>
+            </div>
+            <button id="resumeCanceledBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-display font-bold text-xs uppercase tracking-wider shadow-lg transition">
+                Start Fresh Standard Match
+            </button>
+        </div>
+    </div>
+
+    <!-- Victory / Game Over Overlay Banner -->
+    <div id="victoryModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-sky-400 rounded-2xl max-w-md w-full p-6 text-center shadow-2xl">
+            <div id="victoryEmoji" class="text-5xl mb-3">🏆</div>
+            <h2 id="victoryTitle" class="font-display font-black text-2xl text-white mb-1">SOLAR VANGUARD WINS!</h2>
+            <p id="victoryReason" class="text-sm text-slate-300 mb-5">Enemy Sovereign was captured in battle.</p>
+            <button id="playAgainBtn" class="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-display font-bold text-sm shadow-lg transition">
+                PLAY ANOTHER MATCH
+            </button>
+        </div>
+    </div>
+
+    <!-- Audio Element for Custom Uploaded Music -->
+    <audio id="customBgmPlayer" loop class="hidden"></audio>
+
+    <script>
+        /**************************************************************
+         * 1. SOUND & SYNTHESIZER ENGINE (Built-in WebAudio + Custom Uploads)
+         **************************************************************/
+        class SoundEngine {
+            constructor() {
+                this.ctx = null;
+                this.musicPlaying = true; // Automatically ON
+                this.musicPreset = 'cyber';
+                this.bgmInterval = null;
+                this.step = 0;
+                this.customCaptureAudio = null;
+                this.customEventAudio = null;
+                this.customBgmUrl = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playTone(freq, type = 'sine', duration = 0.15, vol = 0.15, slideFreq = null) {
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    if (slideFreq) {
+                        osc.frequency.exponentialRampToValueAtTime(slideFreq, this.ctx.currentTime + duration);
+                    }
+                    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch (e) {}
+            }
+
+            playMove() {
+                this.playTone(320, 'triangle', 0.11, 0.15, 480);
+            }
+
+            playCapture() {
+                if (this.customCaptureAudio) {
+                    this.customCaptureAudio.currentTime = 0;
+                    this.customCaptureAudio.play().catch(() => {});
+                    return;
+                }
+                this.playTone(180, 'sawtooth', 0.22, 0.2, 65);
+                setTimeout(() => this.playTone(420, 'square', 0.15, 0.12, 120), 60);
+            }
+
+            playWarp() {
+                this.playTone(280, 'sine', 0.28, 0.18, 880);
+            }
+
+            playCataclysm() {
+                if (this.customEventAudio) {
+                    this.customEventAudio.currentTime = 0;
+                    this.customEventAudio.play().catch(() => {});
+                    return;
+                }
+                this.playTone(110, 'sawtooth', 0.45, 0.25, 38);
+                setTimeout(() => this.playTone(90, 'square', 0.35, 0.2, 30), 110);
+            }
+
+            playVictory() {
+                const notes = [261.6, 329.6, 392.0, 523.2];
+                notes.forEach((n, idx) => {
+                    setTimeout(() => this.playTone(n, 'triangle', 0.28, 0.2), idx * 110);
+                });
+            }
+
+            // High-pitch Commander Radio Chitter-Chatter Voice Synth
+            playCommanderChatter() {
+                const syllables = 10;
+                for (let i = 0; i < syllables; i++) {
+                    setTimeout(() => {
+                        const baseFreq = 680 + Math.random() * 520;
+                        const slide = baseFreq + (Math.random() * 300 - 150);
+                        this.playTone(baseFreq, i % 2 === 0 ? 'square' : 'triangle', 0.055, 0.09, slide);
+                    }, i * 62);
+                }
+            }
+
+            playAirstrikeAlarm() {
+                for (let i = 0; i < 4; i++) {
+                    setTimeout(() => {
+                        this.playTone(520, 'sawtooth', 0.35, 0.16, 880);
+                    }, i * 420);
+                }
+            }
+
+            toggleMusic() {
+                this.musicPlaying = !this.musicPlaying;
+                const btn = document.getElementById('musicToggleBtn');
+                if (this.musicPlaying) {
+                    btn.classList.add('border-sky-400', 'bg-sky-500/20');
+                    this.startMusicLoop();
+                } else {
+                    btn.classList.remove('border-sky-400', 'bg-sky-500/20');
+                    this.stopMusicLoop();
+                }
+            }
+
+            startMusicLoop() {
+                this.stopMusicLoop();
+                if (!this.musicPlaying) return;
+
+                const customPlayer = document.getElementById('customBgmPlayer');
+                if (this.musicPreset === 'custom' && this.customBgmUrl) {
+                    customPlayer.src = this.customBgmUrl;
+                    customPlayer.volume = 0.35;
+                    customPlayer.play().catch(() => {});
+                    return;
+                }
+
+                const scales = {
+                    cyber: [130.81, 164.81, 196.00, 220.00, 261.63, 196.00, 164.81, 146.83],
+                    orbital: [220.00, 277.18, 329.63, 440.00, 329.63, 277.18, 246.94, 220.00],
+                    boss: [110.00, 116.54, 130.81, 116.54, 98.00, 110.00, 130.81, 146.83]
+                };
+
+                const tempo = this.musicPreset === 'boss' ? 240 : (this.musicPreset === 'orbital' ? 450 : 320);
+                this.bgmInterval = setInterval(() => {
+                    if (!this.musicPlaying) return;
+                    const notes = scales[this.musicPreset] || scales.cyber;
+                    const freq = notes[this.step % notes.length];
+                    this.playTone(freq, this.musicPreset === 'orbital' ? 'sine' : 'triangle', 0.25, 0.05);
+                    this.step++;
+                }, tempo);
+            }
+
+            stopMusicLoop() {
+                if (this.bgmInterval) clearInterval(this.bgmInterval);
+                const customPlayer = document.getElementById('customBgmPlayer');
+                customPlayer.pause();
+            }
+        }
+
+        const sound = new SoundEngine();
+
+        /**************************************************************
+         * 2. CUSTOM PIECE DEFINITIONS & SVG ARTWORK
+         **************************************************************/
+        const PIECE_INFO = {
+            V: {
+                name: 'Vanguard',
+                value: 120,
+                desc: 'Moves 1 tile forward or sideways (2 forward from start rank). Captures 1 step diagonally forward. Promotes to Archon on far edge.',
+                tags: ['Infantry', 'Side-Step', 'Promotes']
+            },
+            B: {
+                name: 'Bastion',
+                value: 520,
+                desc: 'Slides orthogonally. Heavy armor: Immune to Meteor strikes and can crush right through Crystal Spikes!',
+                tags: ['Juggernaut', 'Meteor-Proof', 'Spike-Crusher']
+            },
+            S: {
+                name: 'Phase Strider',
+                value: 360,
+                desc: 'Leaps in a Knight L-shape OR jumps 2 tiles orthogonally over any obstacle.',
+                tags: ['Jumper', 'High Mobility']
+            },
+            M: {
+                name: 'Warp Mage',
+                value: 380,
+                desc: 'Slides diagonally. Special Ability: Can teleport-swap places with any friendly piece within a 2-tile radius!',
+                tags: ['Diagonal', 'Ally Teleporter']
+            },
+            A: {
+                name: 'Archon',
+                value: 880,
+                desc: 'Apex unit! Slides up to 3 tiles in any direction (orthogonal or diagonal) AND can leap like a Knight.',
+                tags: ['Omni-Slider', 'Knight-Leap']
+            },
+            K: {
+                name: 'Sovereign',
+                value: 10000,
+                desc: 'Command Core! Steps 1 tile in any direction, or phase-dashes 2 tiles orthogonally onto an empty square.',
+                tags: ['Leader', 'Phase-Dash']
+            }
+        };
+
+        function getPieceSVG(type, player, frozenTurns = 0) {
+            const isP1 = player === 1;
+            const primary = isP1 ? 'var(--p1-color)' : 'var(--p2-color)';
+            const coreColor = isP1 ? '#e0f2fe' : '#ffe4e6';
+            const darkShade = isP1 ? '#0369a1' : '#9f1239';
+
+            let shape = '';
+            switch (type) {
+                case 'V': // Vanguard Shield-Spear
+                    shape = `
+                        <ellipse cx="50" cy="84" rx="28" ry="8" fill="${darkShade}"/>
+                        <path d="M26 78 L34 36 L50 20 L66 36 L74 78 Z" fill="${primary}" stroke="#ffffff" stroke-width="3"/>
+                        <polygon points="50,30 60,55 50,70 40,55" fill="${coreColor}"/>
+                    `;
+                    break;
+                case 'B': // Bastion Juggernaut Tower
+                    shape = `
+                        <ellipse cx="50" cy="85" rx="32" ry="9" fill="${darkShade}"/>
+                        <path d="M22 80 L26 30 L36 30 L36 40 L44 40 L44 28 L56 28 L56 40 L64 40 L64 30 L74 30 L78 80 Z" fill="${primary}" stroke="#ffffff" stroke-width="3"/>
+                        <rect x="38" y="52" width="24" height="18" rx="4" fill="${coreColor}"/>
+                    `;
+                    break;
+                case 'S': // Phase Strider Cyber Steed
+                    shape = `
+                        <ellipse cx="50" cy="85" rx="30" ry="8" fill="${darkShade}"/>
+                        <path d="M25 80 L32 45 L24 36 L44 18 L68 24 L60 40 L74 52 L66 80 Z" fill="${primary}" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="48" cy="32" r="5" fill="${coreColor}"/>
+                        <path d="M38 62 L58 48" stroke="${coreColor}" stroke-width="4" stroke-linecap="round"/>
+                    `;
+                    break;
+                case 'M': // Warp Mage Floating Spire
+                    shape = `
+                        <ellipse cx="50" cy="85" rx="28" ry="8" fill="${darkShade}"/>
+                        <path d="M26 80 L38 38 L50 14 L62 38 L74 80 Z" fill="${primary}" stroke="#ffffff" stroke-width="3"/>
+                        <circle cx="50" cy="44" r="11" fill="${coreColor}"/>
+                        <circle cx="50" cy="14" r="5" fill="#facc15"/>
+                    `;
+                    break;
+                case 'A': // Archon (Queen) - Distinct Floating Star Halo & Swept Valkyrie Wings
+                    shape = `
+                        <ellipse cx="50" cy="86" rx="32" ry="8" fill="${darkShade}"/>
+                        <!-- Floating Queen Halo Ring -->
+                        <ellipse cx="50" cy="17" rx="20" ry="6" fill="none" stroke="#e879f9" stroke-width="3.5"/>
+                        <circle cx="50" cy="17" r="4.5" fill="#ffffff"/>
+                        <!-- Swept Gown & Crystal Wings -->
+                        <polygon points="50,24 66,44 90,26 74,80 26,80 10,26 34,44" fill="${primary}" stroke="#ffffff" stroke-width="3"/>
+                        <!-- Inner Queen Diamond Gem -->
+                        <polygon points="50,34 62,54 50,74 38,54" fill="${coreColor}" stroke="#f0abfc" stroke-width="2"/>
+                        <circle cx="24" cy="44" r="4" fill="#f0abfc"/>
+                        <circle cx="76" cy="44" r="4" fill="#f0abfc"/>
+                    `;
+                    break;
+                case 'K': // Sovereign (King) - Distinct Armored Monarch Person Silhouette with Cool Gold Outline
+                    shape = `
+                        <ellipse cx="50" cy="88" rx="35" ry="9" fill="${darkShade}"/>
+                        <!-- Armored Broad Shoulders & Torso -->
+                        <path d="M16 83 C16 56, 30 48, 50 48 C70 48, 84 56, 84 83 Z" fill="${primary}" stroke="#facc15" stroke-width="3.5"/>
+                        <!-- Shoulder Pauldrons -->
+                        <path d="M14 68 Q22 48 36 53" fill="none" stroke="#facc15" stroke-width="3.5" stroke-linecap="round"/>
+                        <path d="M86 68 Q78 48 64 53" fill="none" stroke="#facc15" stroke-width="3.5" stroke-linecap="round"/>
+                        <!-- Monarch Head / Helmet -->
+                        <circle cx="50" cy="34" r="13.5" fill="${primary}" stroke="#facc15" stroke-width="3.5"/>
+                        <!-- Glowing T-Visor Faceplate -->
+                        <path d="M42 32 L58 32 L55 39 L45 39 Z" fill="${coreColor}"/>
+                        <line x1="50" y1="32" x2="50" y2="43" stroke="${coreColor}" stroke-width="3"/>
+                        <!-- High Royal Crown atop Head -->
+                        <polygon points="35,23 39,10 46,18 50,7 54,18 61,10 65,23" fill="#facc15" stroke="#ffffff" stroke-width="1.5"/>
+                        <!-- Sovereign Chest Core Emblem -->
+                        <polygon points="50,55 58,66 50,77 42,66" fill="${coreColor}" stroke="#facc15" stroke-width="2"/>
+                    `;
+                    break;
+            }
+
+            const cryoOverlay = frozenTurns > 0 ? `
+                <rect x="14" y="14" width="72" height="72" rx="14" fill="rgba(56, 189, 248, 0.45)" stroke="#7dd3fc" stroke-width="3" stroke-dasharray="6 3"/>
+                <text x="50" y="30" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="bold">❄️${frozenTurns}</text>
+            ` : '';
+
+            return `<svg class="piece-svg" viewBox="0 0 100 100">${shape}${cryoOverlay}</svg>`;
+        }
+
+        function getHazardSVG(hazard) {
+            if (hazard.type === 'spike') {
+                return `
+                    <svg class="w-4/5 h-4/5 floating-hazard drop-shadow-[0_6px_6px_rgba(0,0,0,0.8)]" viewBox="0 0 100 100">
+                        <polygon points="50,10 72,82 28,82" fill="#a855f7" stroke="#f3e8ff" stroke-width="3"/>
+                        <polygon points="28,32 48,84 14,84" fill="#7e22ce" stroke="#e9d5ff" stroke-width="2"/>
+                        <polygon points="72,36 86,84 52,84" fill="#9333ea" stroke="#e9d5ff" stroke-width="2"/>
+                        <text x="50" y="75" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="bold">${hazard.turns}</text>
+                    </svg>
+                `;
+            }
+            if (hazard.type === 'crater') {
+                return `
+                    <svg class="w-4/5 h-4/5 drop-shadow-[0_4px_4px_rgba(0,0,0,0.9)]" viewBox="0 0 100 100">
+                        <circle cx="50" cy="54" r="36" fill="#1c1917" stroke="#f97316" stroke-width="4" stroke-dasharray="8 4"/>
+                        <circle cx="50" cy="54" r="20" fill="#ea580c" opacity="0.75"/>
+                        <text x="50" y="60" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="bold">☄️${hazard.turns}</text>
+                    </svg>
+                `;
+            }
+            if (hazard.type === 'aether') {
+                return `
+                    <svg class="w-3/4 h-3/4 floating-hazard drop-shadow-[0_0_12px_#10b981]" viewBox="0 0 100 100">
+                        <polygon points="50,12 80,50 50,88 20,50" fill="#10b981" stroke="#d1fae5" stroke-width="3"/>
+                        <circle cx="50" cy="50" r="12" fill="#ecfdf5"/>
+                        <text x="50" y="96" text-anchor="middle" fill="#6ee7b7" font-size="15" font-weight="bold">+PROMOTE</text>
+                    </svg>
+                `;
+            }
+            if (hazard.type === 'void') {
+                return `
+                    <svg class="w-4/5 h-4/5 animate-spin" style="animation-duration: 9s" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="34" fill="none" stroke="#a855f7" stroke-width="4" stroke-dasharray="14 8"/>
+                        <circle cx="50" cy="50" r="18" fill="#020617" stroke="#38bdf8" stroke-width="2"/>
+                    </svg>
+                `;
+            }
+            return '';
+        }
+
+        /**************************************************************
+         * 3. BOARD STATE, CUSTOM MOVEMENT RULES & DYNAMIC EVENTS
+         **************************************************************/
+        class TactiCoreGame {
+            constructor() {
+                this.mode = 'ai-med'; // 'ai-easy', 'ai-med', 'ai-hard', 'pvp'
+                this.classicChess = false; // Normal Chess vs Better Chess toggle
+                this.zombieMode = false;
+                this.autoFlipPVP = true;
+                this.is25D = true;
+                this.eventFrequency = 4;
+                this.history = [];
+                this.reinforceQueue = [];
+                this.commanderSuggestion = null;
+                this.airstrikeTargets = [];
+                this.airstrikePending = false;
+                this.commanderTypewriterTimer = null;
+
+                // 1-second ticker for the 45-second Reinforcement Respawn Queue
+                this.reinforceInterval = setInterval(() => this.tickReinforcements(), 1000);
+                this.reset();
+            }
+
+            reset() {
+                // 8x8 Grid: each cell has { piece: {type, player, frozen}, hazard: {type, turns, name} }
+                this.grid = Array.from({ length: 8 }, () =>
+                    Array.from({ length: 8 }, () => ({ piece: null, hazard: null }))
+                );
+
+                const backRow = ['B', 'S', 'M', 'A', 'K', 'M', 'S', 'B'];
+                for (let c = 0; c < 8; c++) {
+                    // Player 2 (Top - Crimson Syndicate)
+                    this.grid[0][c].piece = { type: backRow[c], player: 2, frozen: 0 };
+                    this.grid[1][c].piece = { type: 'V', player: 2, frozen: 0 };
+                    // Player 1 (Bottom - Solar Vanguard)
+                    this.grid[6][c].piece = { type: 'V', player: 1, frozen: 0 };
+                    this.grid[7][c].piece = { type: backRow[c], player: 1, frozen: 0 };
+                }
+
+                this.turn = 1; // 1 or 2
+                this.turnNumber = 1;
+                this.turnsUntilEvent = this.eventFrequency > 0 ? this.eventFrequency : 999;
+                this.selected = null;
+                this.legalMoves = [];
+                this.enemyPreview = null;
+                this.enemyPreviewMoves = [];
+                this.commanderSuggestion = null;
+                this.airstrikeTargets = [];
+                this.airstrikePending = false;
+                document.getElementById('airstrikeWarningBanner')?.classList.add('hidden');
+                this.hideCommanderBanner();
+                this.lastMove = null;
+                this.capturedCount = { 1: 0, 2: 0 };
+                this.reinforceQueue = [];
+                this.gameOver = false;
+                this.history = [];
+
+                document.getElementById('battleLog').innerHTML = '';
+                this.logEvent(`⚡ Better Chess initialized (${this.classicChess ? 'Classic Chess Rules' : 'Better Chess Rules'})! Press ESC anytime to unselect.`, 'text-sky-400');
+                if (this.zombieMode) {
+                    this.logEvent('🧟 ZOMBIE MODE ACTIVE: Captured units turn into your own army!', 'text-lime-400 font-bold');
+                }
+                this.updateBoardFlip();
+                this.render();
+                this.renderReinforceQueue();
+            }
+
+            unselectPiece() {
+                if (this.selected || this.enemyPreview) {
+                    this.selected = null;
+                    this.legalMoves = [];
+                    this.enemyPreview = null;
+                    this.enemyPreviewMoves = [];
+                    sound.playTone(220, 'sine', 0.06, 0.08);
+                    this.render();
+                }
+            }
+
+            cancelGame() {
+                this.gameOver = true;
+                this.selected = null;
+                this.legalMoves = [];
+                this.enemyPreview = null;
+                this.enemyPreviewMoves = [];
+                this.reinforceQueue = [];
+                this.hideCommanderBanner();
+                this.logEvent('🛑 Match canceled by commander.', 'text-rose-400 font-bold');
+                this.render();
+                this.renderReinforceQueue();
+                const cancelModal = document.getElementById('cancelModal');
+                cancelModal.classList.remove('hidden');
+                cancelModal.classList.add('flex');
+            }
+
+            enqueueReinforcement(pieceType, ownerPlayer) {
+                if (pieceType === 'K' || this.gameOver) return;
+                this.reinforceQueue.push({
+                    type: pieceType,
+                    player: ownerPlayer,
+                    remainingSec: 45
+                });
+                this.renderReinforceQueue();
+            }
+
+            findRespawnSquare(player) {
+                const preferredRows = player === 1 ? [7, 6, 5] : [0, 1, 2];
+                for (const r of preferredRows) {
+                    const cols = [0, 1, 2, 3, 4, 5, 6, 7].sort(() => Math.random() - 0.5);
+                    for (const c of cols) {
+                        if (!this.grid[r][c].piece && !this.grid[r][c].hazard) {
+                            return { r, c };
+                        }
+                    }
+                }
+                return null;
+            }
+
+            tickReinforcements() {
+                if (this.gameOver || this.reinforceQueue.length === 0) return;
+
+                let boardChanged = false;
+                for (let i = this.reinforceQueue.length - 1; i >= 0; i--) {
+                    const item = this.reinforceQueue[i];
+                    item.remainingSec--;
+                    if (item.remainingSec <= 0) {
+                        const spot = this.findRespawnSquare(item.player);
+                        if (spot) {
+                            this.grid[spot.r][spot.c].piece = {
+                                type: item.type,
+                                player: item.player,
+                                frozen: 0
+                            };
+                            const coord = `${String.fromCharCode(65 + spot.c)}${8 - spot.r}`;
+                            const teamName = item.player === 1 ? 'Solar Vanguard' : 'Crimson Syndicate';
+                            sound.playWarp();
+                            this.logEvent(`🪂 REINFORCEMENT DROP! ${teamName}'s ${PIECE_INFO[item.type].name} redeployed at ${coord}!`, 'text-sky-300 font-bold');
+                            this.reinforceQueue.splice(i, 1);
+                            boardChanged = true;
+                        } else {
+                            item.remainingSec = 5; // Wait 5s if home ranks are completely full
+                        }
+                    }
+                }
+
+                this.renderReinforceQueue();
+                if (boardChanged) this.render();
+            }
+
+            renderReinforceQueue() {
+                const listEl = document.getElementById('reinforceQueueList');
+                if (!listEl) return;
+                if (this.reinforceQueue.length === 0) {
+                    listEl.innerHTML = '<div class="text-slate-500 italic text-[11px]">No fallen units in orbital queue...</div>';
+                    return;
+                }
+                listEl.innerHTML = '';
+                this.reinforceQueue.forEach(item => {
+                    const row = document.createElement('div');
+                    const badgeColor = item.player === 1 ? 'text-sky-400 border-sky-500/40 bg-sky-950/50' : 'text-rose-400 border-rose-500/40 bg-rose-950/50';
+                    row.className = `flex items-center justify-between px-2.5 py-1 rounded-lg border ${badgeColor}`;
+                    row.innerHTML = `
+                        <span class="font-semibold">${item.player === 1 ? '☀️' : '🩸'} ${PIECE_INFO[item.type].name}</span>
+                        <span class="font-mono font-bold text-amber-300">${item.remainingSec}s</span>
+                    `;
+                    listEl.appendChild(row);
+                });
+            }
+
+            cloneState(grid) {
+                return grid.map(row =>
+                    row.map(cell => ({
+                        piece: cell.piece ? { ...cell.piece } : null,
+                        hazard: cell.hazard ? { ...cell.hazard } : null
+                    }))
+                );
+            }
+
+            saveSnapshot() {
+                this.history.push({
+                    grid: this.cloneState(this.grid),
+                    turn: this.turn,
+                    turnNumber: this.turnNumber,
+                    turnsUntilEvent: this.turnsUntilEvent,
+                    lastMove: this.lastMove ? { ...this.lastMove } : null,
+                    capturedCount: { ...this.capturedCount },
+                    reinforceQueue: this.reinforceQueue.map(q => ({ ...q }))
+                });
+                if (this.history.length > 20) this.history.shift();
+            }
+
+            undo() {
+                if (this.history.length === 0 || this.gameOver) return;
+                // If playing against AI, pop twice to return to player's turn
+                let snap = this.history.pop();
+                if (this.mode.startsWith('ai') && this.turn === 1 && this.history.length > 0) {
+                    snap = this.history.pop();
+                }
+                this.grid = snap.grid;
+                this.turn = snap.turn;
+                this.turnNumber = snap.turnNumber;
+                this.turnsUntilEvent = snap.turnsUntilEvent;
+                this.lastMove = snap.lastMove;
+                this.capturedCount = snap.capturedCount;
+                this.reinforceQueue = snap.reinforceQueue || [];
+                this.selected = null;
+                this.legalMoves = [];
+                this.enemyPreview = null;
+                this.enemyPreviewMoves = [];
+                this.hideCommanderBanner();
+                this.logEvent('↶ Time rift rewound previous turn.', 'text-slate-400');
+                this.updateBoardFlip();
+                this.render();
+                this.renderReinforceQueue();
+            }
+
+            inBounds(r, c) {
+                return r >= 0 && r < 8 && c >= 0 && c < 8;
+            }
+
+            isTileBlockedByHazard(cell, pieceType) {
+                if (!cell.hazard) return false;
+                if (cell.hazard.type === 'void' || cell.hazard.type === 'crater') return true;
+                // Bastions ('B') can crush through Crystal Spikes!
+                if (cell.hazard.type === 'spike' && pieceType !== 'B') return true;
+                return false;
+            }
+
+            getMovesForSquare(r, c, board = this.grid) {
+                const cell = board[r][c];
+                const piece = cell.piece;
+                if (!piece || piece.frozen > 0) return [];
+
+                const moves = [];
+                const p = piece.player;
+                const dir = p === 1 ? -1 : 1; // P1 moves up (-1), P2 moves down (+1)
+
+                const addMove = (nr, nc, moveType = 'normal') => {
+                    if (!this.inBounds(nr, nc)) return false;
+                    const targetCell = board[nr][nc];
+                    if (this.isTileBlockedByHazard(targetCell, piece.type)) return false;
+
+                    if (!targetCell.piece) {
+                        moves.push({ r: nr, c: nc, type: moveType });
+                        return true; // continue sliding
+                    } else if (targetCell.piece.player !== p && targetCell.piece.frozen === 0) {
+                        moves.push({ r: nr, c: nc, type: 'capture' });
+                        return false; // stop sliding after capture
+                    }
+                    return false; // blocked by friendly or frozen piece
+                };
+
+                // Standard Classic Chess movement rules if switched to Normal Chess mode
+                if (this.classicChess) {
+                    switch (piece.type) {
+                        case 'V': { // Classic Pawn
+                            if (this.inBounds(r + dir, c) && !board[r + dir][c].piece && !this.isTileBlockedByHazard(board[r + dir][c], 'V')) {
+                                moves.push({ r: r + dir, c, type: 'normal' });
+                                const startRow = p === 1 ? 6 : 1;
+                                if (r === startRow && this.inBounds(r + dir * 2, c) && !board[r + dir * 2][c].piece && !this.isTileBlockedByHazard(board[r + dir * 2][c], 'V')) {
+                                    moves.push({ r: r + dir * 2, c, type: 'normal' });
+                                }
+                            }
+                            for (const dc of [-1, 1]) {
+                                const nr = r + dir, nc = c + dc;
+                                if (this.inBounds(nr, nc) && !this.isTileBlockedByHazard(board[nr][nc], 'V')) {
+                                    const tPiece = board[nr][nc].piece;
+                                    if (tPiece && tPiece.player !== p && tPiece.frozen === 0) {
+                                        moves.push({ r: nr, c: nc, type: 'capture' });
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                        case 'B': { // Classic Rook
+                            for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+                                for (let step = 1; step < 8; step++) {
+                                    if (!addMove(r + dr * step, c + dc * step)) break;
+                                }
+                            }
+                            break;
+                        }
+                        case 'S': { // Classic Knight
+                            for (const [dr, dc] of [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]) {
+                                addMove(r + dr, c + dc);
+                            }
+                            break;
+                        }
+                        case 'M': { // Classic Bishop
+                            for (const [dr, dc] of [[-1,-1],[-1,1],[1,-1],[1,1]]) {
+                                for (let step = 1; step < 8; step++) {
+                                    if (!addMove(r + dr * step, c + dc * step)) break;
+                                }
+                            }
+                            break;
+                        }
+                        case 'A': { // Classic Queen
+                            for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]]) {
+                                for (let step = 1; step < 8; step++) {
+                                    if (!addMove(r + dr * step, c + dc * step)) break;
+                                }
+                            }
+                            break;
+                        }
+                        case 'K': { // Classic King
+                            for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]]) {
+                                addMove(r + dr, c + dc);
+                            }
+                            break;
+                        }
+                    }
+                    return moves;
+                }
+
+                switch (piece.type) {
+                    case 'V': { // Vanguard: 1 step forward or sideways, 2 forward from start rank, diagonal capture
+                        // Forward 1
+                        if (this.inBounds(r + dir, c) && !board[r + dir][c].piece && !this.isTileBlockedByHazard(board[r + dir][c], 'V')) {
+                            moves.push({ r: r + dir, c, type: 'normal' });
+                            const startRow = p === 1 ? 6 : 1;
+                            if (r === startRow && this.inBounds(r + dir * 2, c) && !board[r + dir * 2][c].piece && !this.isTileBlockedByHazard(board[r + dir * 2][c], 'V')) {
+                                moves.push({ r: r + dir * 2, c, type: 'normal' });
+                            }
+                        }
+                        // Tactical Sideways 1 step (Non-capturing)
+                        for (const dc of [-1, 1]) {
+                            if (this.inBounds(r, c + dc) && !board[r][c + dc].piece && !this.isTileBlockedByHazard(board[r][c + dc], 'V')) {
+                                moves.push({ r, c: c + dc, type: 'normal' });
+                            }
+                        }
+                        // Diagonal forward capture
+                        for (const dc of [-1, 1]) {
+                            const nr = r + dir, nc = c + dc;
+                            if (this.inBounds(nr, nc) && !this.isTileBlockedByHazard(board[nr][nc], 'V')) {
+                                const tPiece = board[nr][nc].piece;
+                                if (tPiece && tPiece.player !== p && tPiece.frozen === 0) {
+                                    moves.push({ r: nr, c: nc, type: 'capture' });
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+                    case 'B': { // Bastion: Orthogonal slider, smashes spikes
+                        const dirs = [[-1,0], [1,0], [0,-1], [0,1]];
+                        for (const [dr, dc] of dirs) {
+                            for (let step = 1; step < 8; step++) {
+                                if (!addMove(r + dr * step, c + dc * step)) break;
+                            }
+                        }
+                        break;
+                    }
+
+                    case 'S': { // Phase Strider: Knight jumps + 2-tile orthogonal phase leaps
+                        const jumps = [
+                            [-2,-1], [-2,1], [-1,-2], [-1,2],
+                            [1,-2], [1,2], [2,-1], [2,1],
+                            [-2,0], [2,0], [0,-2], [0,2]
+                        ];
+                        for (const [dr, dc] of jumps) {
+                            addMove(r + dr, c + dc);
+                        }
+                        break;
+                    }
+
+                    case 'M': { // Warp Mage: Diagonal slider + 2-tile Ally Swap
+                        const diagDirs = [[-1,-1], [-1,1], [1,-1], [1,1]];
+                        for (const [dr, dc] of diagDirs) {
+                            for (let step = 1; step < 8; step++) {
+                                if (!addMove(r + dr * step, c + dc * step)) break;
+                            }
+                        }
+                        // Special Ability: Warp-Swap with friendly unit within 2 tiles
+                        for (let dr = -2; dr <= 2; dr++) {
+                            for (let dc = -2; dc <= 2; dc++) {
+                                if (dr === 0 && dc === 0) continue;
+                                const nr = r + dr, nc = c + dc;
+                                if (this.inBounds(nr, nc)) {
+                                    const target = board[nr][nc];
+                                    if (target.piece && target.piece.player === p && target.piece.type !== 'K' && target.piece.frozen === 0) {
+                                        moves.push({ r: nr, c: nc, type: 'swap' });
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+
+                    case 'A': { // Archon: Slides up to 3 steps in all 8 directions + Knight leaps
+                        const allDirs = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+                        for (const [dr, dc] of allDirs) {
+                            for (let step = 1; step <= 3; step++) {
+                                if (!addMove(r + dr * step, c + dc * step)) break;
+                            }
+                        }
+                        const knightJumps = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];
+                        for (const [dr, dc] of knightJumps) {
+                            addMove(r + dr, c + dc);
+                        }
+                        break;
+                    }
+
+                    case 'K': { // Sovereign: 1 step any direction + 2-step orthogonal phase dash to empty square
+                        const allDirs = [[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[-1,1],[1,-1],[1,1]];
+                        for (const [dr, dc] of allDirs) {
+                            addMove(r + dr, c + dc);
+                        }
+                        const orthoJumps = [[-2,0],[2,0],[0,-2],[0,2]];
+                        for (const [dr, dc] of orthoJumps) {
+                            const nr = r + dr, nc = c + dc;
+                            if (this.inBounds(nr, nc) && !board[nr][nc].piece && !this.isTileBlockedByHazard(board[nr][nc], 'K')) {
+                                moves.push({ r: nr, c: nc, type: 'ability' });
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                return moves;
+            }
+
+            isSovereignInDanger(player, board = this.grid) {
+                let kingPos = null;
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = board[r][c].piece;
+                        if (p && p.player === player && p.type === 'K') {
+                            kingPos = { r, c };
+                            break;
+                        }
+                    }
+                }
+                if (!kingPos) return true;
+
+                const enemy = player === 1 ? 2 : 1;
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = board[r][c].piece;
+                        if (p && p.player === enemy) {
+                            const enemyMoves = this.getMovesForSquare(r, c, board);
+                            if (enemyMoves.some(m => m.r === kingPos.r && m.c === kingPos.c && m.type === 'capture')) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+
+            executeMove(fromR, fromC, move) {
+                if (this.gameOver) return;
+                this.saveSnapshot();
+
+                this.hideCommanderBanner();
+                this.commanderSuggestion = null;
+                this.enemyPreview = null;
+                this.enemyPreviewMoves = [];
+
+                const fromCell = this.grid[fromR][fromC];
+                const toCell = this.grid[move.r][move.c];
+                const movingPiece = fromCell.piece;
+                const coordName = `${String.fromCharCode(65 + fromC)}${8 - fromR} → ${String.fromCharCode(65 + move.c)}${8 - move.r}`;
+
+                // Handle Warp Mage Swap
+                if (move.type === 'swap') {
+                    const allyPiece = toCell.piece;
+                    toCell.piece = movingPiece;
+                    fromCell.piece = allyPiece;
+                    sound.playWarp();
+                    this.logEvent(`🔮 Warp Mage swapped places with ${PIECE_INFO[allyPiece.type].name} (${coordName})`, 'text-purple-300');
+                } else {
+                    // Check Capture
+                    if (toCell.piece) {
+                        const captured = toCell.piece;
+                        this.capturedCount[this.turn]++;
+                        sound.playCapture();
+
+                        if (captured.type === 'K') {
+                            toCell.piece = movingPiece;
+                            fromCell.piece = null;
+                            this.endGame(this.turn, 'Enemy Sovereign Core was destroyed in combat!');
+                            return;
+                        }
+
+                        if (this.zombieMode) {
+                            // Zombie Mode: The captured piece mutates into the capturer's team on their home rows, or the old square!
+                            const spawnSpot = this.grid[fromR][fromC];
+                            this.logEvent(`🧟 ZOMBIE INFECTION! Captured ${PIECE_INFO[captured.type].name} mutated into an allied unit at ${String.fromCharCode(65 + fromC)}${8 - fromR}!`, 'text-lime-400 font-bold');
+                            toCell.piece = movingPiece;
+                            spawnSpot.piece = {
+                                type: captured.type,
+                                player: movingPiece.player,
+                                frozen: 0
+                            };
+                        } else {
+                            this.logEvent(`⚔️ ${PIECE_INFO[movingPiece.type].name} captured enemy ${PIECE_INFO[captured.type].name}! (Respawning in 45s)`, 'text-rose-400');
+                            this.enqueueReinforcement(captured.type, captured.player);
+                            toCell.piece = movingPiece;
+                            fromCell.piece = null;
+                        }
+                    } else {
+                        sound.playMove();
+                        this.logEvent(`${this.turn === 1 ? '☀️' : '🩸'} ${PIECE_INFO[movingPiece.type].name}: ${coordName}`, 'text-slate-300');
+                        toCell.piece = movingPiece;
+                        fromCell.piece = null;
+                    }
+
+                    // Bastion crushing Crystal Spike
+                    if (toCell.hazard && toCell.hazard.type === 'spike' && movingPiece.type === 'B') {
+                        toCell.hazard = null;
+                        this.logEvent(`🏛️ Bastion pulverized the Crystal Spike!`, 'text-purple-400');
+                    }
+
+                    // Claiming Aether Core buff
+                    if (toCell.hazard && toCell.hazard.type === 'aether') {
+                        toCell.hazard = null;
+                        if (movingPiece.type !== 'K' && movingPiece.type !== 'A') {
+                            movingPiece.type = 'A';
+                            sound.playWarp();
+                            this.logEvent(`✨ Aether Core absorbed! Unit ascended to an ARCHON!`, 'text-emerald-400 font-bold');
+                        }
+                    }
+
+                    // Vanguard Edge Promotion
+                    const promoRow = movingPiece.player === 1 ? 0 : 7;
+                    if (movingPiece.type === 'V' && move.r === promoRow) {
+                        movingPiece.type = 'A';
+                        sound.playWarp();
+                        this.logEvent(`⚡ Vanguard reached the Rift edge and promoted to ARCHON!`, 'text-amber-300 font-bold');
+                    }
+                }
+
+                this.lastMove = { fromR, fromC, toR: move.r, toC: move.c };
+                this.selected = null;
+                this.legalMoves = [];
+
+                // Advance turn & tick hazard timers
+                this.advanceTurn();
+            }
+
+            advanceTurn() {
+                this.turn = this.turn === 1 ? 2 : 1;
+                this.turnNumber++;
+
+                // Tick down hazard & freeze durations
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const cell = this.grid[r][c];
+                        if (cell.piece && cell.piece.frozen > 0) {
+                            cell.piece.frozen--;
+                            if (cell.piece.frozen === 0) {
+                                this.logEvent(`❄️ Unit at ${String.fromCharCode(65 + c)}${8 - r} thawed from Cryo Ice!`, 'text-cyan-300');
+                            }
+                        }
+                        if (cell.hazard && cell.hazard.turns !== undefined) {
+                            cell.hazard.turns--;
+                            if (cell.hazard.turns <= 0) {
+                                this.logEvent(`🌀 ${cell.hazard.name} at ${String.fromCharCode(65 + c)}${8 - r} dissipated! Path is open.`, 'text-emerald-300');
+                                cell.hazard = null;
+                            }
+                        }
+                    }
+                }
+
+                // Trigger Cataclysm Event if countdown hits zero
+                if (this.eventFrequency > 0) {
+                    this.turnsUntilEvent--;
+                    if (this.turnsUntilEvent <= 0) {
+                        this.triggerRandomCataclysm();
+                        this.turnsUntilEvent = this.eventFrequency;
+                    }
+                }
+
+                // Check if both Sovereigns are still alive
+                const p1King = this.findSovereign(1);
+                const p2King = this.findSovereign(2);
+                if (!p1King) return this.endGame(2, 'Solar Sovereign was lost!');
+                if (!p2King) return this.endGame(1, 'Crimson Sovereign was lost!');
+
+                this.updateBoardFlip();
+
+                // Adaptive Commander Suggestion Probability:
+                // Rare (~7%) when winning or ahead, Moderate (~18%) when even, Much More Common (~68%) when losing!
+                const isHumanTurn = this.turn === 1 || this.mode === 'pvp';
+                if (!this.gameOver && isHumanTurn) {
+                    const rawEval = this.evaluateBoard(this.grid); // Positive favors P2, Negative favors P1
+                    const humanAdvantage = this.turn === 1 ? -rawEval : rawEval;
+
+                    let triggerChance = 0.16;
+                    let sitLabel = 'EVEN MATCH';
+                    if (humanAdvantage > 180) {
+                        triggerChance = 0.06; // Very rare if winning comfortably
+                        sitLabel = 'ADVANTAGE INTEL';
+                    } else if (humanAdvantage < -150) {
+                        triggerChance = 0.68; // Common if losing!
+                        sitLabel = 'EMERGENCY SUPPORT';
+                    }
+
+                    if (Math.random() < triggerChance) {
+                        this.generateCommanderSuggestion(this.turn, sitLabel);
+                    }
+                }
+
+                this.render();
+
+                // If AI turn, schedule Bot move
+                if (!this.gameOver && this.mode.startsWith('ai') && this.turn === 2) {
+                    setTimeout(() => this.makeAIMove(), 480);
+                }
+            }
+
+            generateCommanderSuggestion(player, situationLabel = 'TACTICAL INTEL') {
+                const best = this.findBestMoveForPlayer(player);
+                if (!best) return;
+
+                this.commanderSuggestion = best;
+                const piece = this.grid[best.fromR][best.fromC].piece;
+                const fromCoord = `${String.fromCharCode(65 + best.fromC)}${8 - best.fromR}`;
+                const toCoord = `${String.fromCharCode(65 + best.move.c)}${8 - best.move.r}`;
+
+                const callouts = [
+                    `"Commander on comms! Move your ${PIECE_INFO[piece.type].name} from ${fromCoord} to ${toCoord} to turn the tide!"`,
+                    `"Listen up! Send ${PIECE_INFO[piece.type].name} (${fromCoord} → ${toCoord}) right now to break their formation!"`,
+                    `"Tactical override! Advancing ${PIECE_INFO[piece.type].name} from ${fromCoord} to ${toCoord} is your strongest play!"`
+                ];
+
+                const fullText = callouts[Math.floor(Math.random() * callouts.length)];
+                const msgEl = document.getElementById('commanderMessage');
+                const badgeEl = document.getElementById('commanderSituationBadge');
+                badgeEl.textContent = situationLabel;
+
+                const banner = document.getElementById('commanderBanner');
+                banner.classList.remove('hidden', 'commander-pop-anim');
+                banner.classList.add('flex');
+                void banner.offsetWidth;
+                banner.classList.add('commander-pop-anim');
+
+                // Play high-pitched Commander chitter-chatter radio voice
+                sound.playCommanderChatter();
+
+                // Typewriter text animation
+                if (this.commanderTypewriterTimer) clearInterval(this.commanderTypewriterTimer);
+                msgEl.textContent = '';
+                let idx = 0;
+                this.commanderTypewriterTimer = setInterval(() => {
+                    msgEl.textContent += fullText.charAt(idx);
+                    idx++;
+                    if (idx >= fullText.length) {
+                        clearInterval(this.commanderTypewriterTimer);
+                    }
+                }, 18);
+            }
+
+            hideCommanderBanner() {
+                if (this.commanderTypewriterTimer) clearInterval(this.commanderTypewriterTimer);
+                const banner = document.getElementById('commanderBanner');
+                if (banner) {
+                    banner.classList.add('hidden');
+                    banner.classList.remove('flex', 'commander-pop-anim');
+                }
+            }
+
+            findSovereign(player) {
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = this.grid[r][c].piece;
+                        if (p && p.player === player && p.type === 'K') return { r, c };
+                    }
+                }
+                return null;
+            }
+
+            /**************************************************************
+             * 4. DYNAMIC ARENA CATACLYSM EVENTS (Including 2s Warning Bombing Jets!)
+             **************************************************************/
+            triggerBombingRun() {
+                if (this.airstrikePending || this.gameOver) return;
+                this.airstrikePending = true;
+
+                // Pick 3 target squares along a tactical row in the middle battle zone (rows 2..5)
+                const targetRow = 2 + Math.floor(Math.random() * 4);
+                const startCol = Math.floor(Math.random() * 5);
+                this.airstrikeTargets = [
+                    { r: targetRow, c: startCol },
+                    { r: targetRow, c: startCol + 1 },
+                    { r: targetRow, c: startCol + 2 }
+                ];
+
+                const hitCoords = this.airstrikeTargets.map(t => `${String.fromCharCode(65 + t.c)}${8 - t.r}`);
+                this.logEvent(`🚨 INCOMING AIRSTRIKE LOCKED ON [${hitCoords.join(', ')}]! Impact in 2 seconds!`, 'text-red-400 font-bold');
+
+                // Show Red Warning Text Banner & Flashing Target Circles
+                const warningBanner = document.getElementById('airstrikeWarningBanner');
+                warningBanner.classList.remove('hidden');
+                warningBanner.classList.add('flex');
+                sound.playAirstrikeAlarm();
+                this.render();
+
+                // Wait 2 seconds while flashing red circles, then fly jet and detonate bombs
+                setTimeout(() => {
+                    if (this.gameOver) {
+                        this.airstrikePending = false;
+                        this.airstrikeTargets = [];
+                        warningBanner.classList.add('hidden');
+                        return;
+                    }
+
+                    sound.playCataclysm();
+
+                    // Animate Fighter Jet Flyover
+                    const jetContainer = document.getElementById('jetFlyoverContainer');
+                    const jetSprite = document.getElementById('jetSprite');
+                    jetContainer.classList.remove('hidden');
+                    jetSprite.classList.remove('jet-flyover-active');
+                    void jetSprite.offsetWidth;
+                    jetSprite.classList.add('jet-flyover-active');
+                    setTimeout(() => jetContainer.classList.add('hidden'), 1300);
+
+                    // Screen shake
+                    const mainArea = document.getElementById('mainShakeArea');
+                    mainArea.classList.remove('shake-effect');
+                    void mainArea.offsetWidth;
+                    mainArea.classList.add('shake-effect');
+
+                    for (const t of this.airstrikeTargets) {
+                        const cell = this.grid[t.r][t.c];
+                        const coord = `${String.fromCharCode(65 + t.c)}${8 - t.r}`;
+
+                        if (cell.piece) {
+                            if (cell.piece.type === 'K' || cell.piece.type === 'B') {
+                                this.logEvent(`✈️ Jet bomb hit ${coord}, but ${PIECE_INFO[cell.piece.type].name} armor withstood the blast!`, 'text-amber-300');
+                            } else {
+                                const lost = cell.piece;
+                                this.enqueueReinforcement(lost.type, lost.player);
+                                cell.piece = null;
+                                this.logEvent(`✈️ AIRSTRIKE! Bombing Jet obliterated ${PIECE_INFO[lost.type].name} at ${coord}! (Respawning in 45s)`, 'text-rose-400 font-bold');
+                            }
+                        }
+                        if (!cell.piece) {
+                            cell.hazard = { type: 'crater', name: 'Bomb Crater', turns: 3 };
+                        }
+                    }
+
+                    this.airstrikeTargets = [];
+                    this.airstrikePending = false;
+                    warningBanner.classList.add('hidden');
+                    warningBanner.classList.remove('flex');
+                    this.render();
+                }, 2000);
+            }
+
+            triggerRandomCataclysm() {
+                const eventTypes = ['airstrike', 'meteor', 'spikes', 'cryo', 'aether', 'gale'];
+                const chosen = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+
+                if (chosen === 'airstrike') {
+                    this.triggerBombingRun();
+                    return;
+                }
+
+                sound.playCataclysm();
+
+                // Shake screen effect
+                const mainArea = document.getElementById('mainShakeArea');
+                mainArea.classList.remove('shake-effect');
+                void mainArea.offsetWidth;
+                mainArea.classList.add('shake-effect');
+
+                if (chosen === 'meteor') {
+                    // Pick a random square in rows 1..6
+                    const r = 1 + Math.floor(Math.random() * 6);
+                    const c = Math.floor(Math.random() * 8);
+                    const cell = this.grid[r][c];
+                    const coord = `${String.fromCharCode(65 + c)}${8 - r}`;
+
+                    if (cell.piece) {
+                        if (cell.piece.type === 'K') {
+                            this.logEvent(`☄️ METEOR struck ${coord}, but Sovereign Core deflected the blast!`, 'text-amber-400 font-bold');
+                            return;
+                        } else if (cell.piece.type === 'B') {
+                            this.logEvent(`☄️ METEOR struck ${coord}, but Bastion armor absorbed the impact!`, 'text-sky-300 font-bold');
+                            return;
+                        } else {
+                            const lost = cell.piece;
+                            this.enqueueReinforcement(lost.type, lost.player);
+                            cell.piece = null;
+                            this.logEvent(`☄️ CATACLYSM! A Meteor obliterated ${PIECE_INFO[lost.type].name} at ${coord}! (Respawning in 45s)`, 'text-orange-400 font-bold');
+                        }
+                    } else {
+                        this.logEvent(`☄️ METEOR IMPACT scorched tile ${coord}! Impassable for 4 turns.`, 'text-orange-400 font-bold');
+                    }
+                    cell.hazard = { type: 'crater', name: 'Meteor Crater', turns: 4 };
+                }
+
+                else if (chosen === 'spikes') {
+                    let spawned = 0;
+                    for (let attempt = 0; attempt < 20 && spawned < 2; attempt++) {
+                        const r = 2 + Math.floor(Math.random() * 4);
+                        const c = Math.floor(Math.random() * 8);
+                        if (!this.grid[r][c].piece && !this.grid[r][c].hazard) {
+                            this.grid[r][c].hazard = { type: 'spike', name: 'Crystal Spike', turns: 5 };
+                            spawned++;
+                        }
+                    }
+                    this.logEvent(`💎 CRYSTAL ERUPTION! ${spawned} Crystal Spikes jutted out of the ground (5 turns).`, 'text-purple-400 font-bold');
+                }
+
+                else if (chosen === 'cryo') {
+                    const candidates = [];
+                    for (let r = 0; r < 8; r++) {
+                        for (let c = 0; c < 8; c++) {
+                            const p = this.grid[r][c].piece;
+                            if (p && p.type !== 'K' && p.frozen === 0) candidates.push({ r, c, p });
+                        }
+                    }
+                    if (candidates.length > 0) {
+                        const pick = candidates[Math.floor(Math.random() * candidates.length)];
+                        pick.p.frozen = 3;
+                        const coord = `${String.fromCharCode(65 + pick.c)}${8 - pick.r}`;
+                        this.logEvent(`❄️ CRYO STORM! ${PIECE_INFO[pick.p.type].name} at ${coord} is frozen solid for 3 turns!`, 'text-cyan-300 font-bold');
+                    }
+                }
+
+                else if (chosen === 'aether') {
+                    for (let attempt = 0; attempt < 25; attempt++) {
+                        const r = 2 + Math.floor(Math.random() * 4);
+                        const c = Math.floor(Math.random() * 8);
+                        if (!this.grid[r][c].piece && !this.grid[r][c].hazard) {
+                            this.grid[r][c].hazard = { type: 'aether', name: 'Aether Core', turns: 6 };
+                            const coord = `${String.fromCharCode(65 + c)}${8 - r}`;
+                            this.logEvent(`✨ AETHER RIFT! An Aether Core spawned at ${coord}—step on it to promote to Archon!`, 'text-emerald-400 font-bold');
+                            break;
+                        }
+                    }
+                }
+
+                else if (chosen === 'gale') {
+                    // Solar Gale: pushes 1 random non-King unit 1 tile sideways if empty
+                    const units = [];
+                    for (let r = 1; r < 7; r++) {
+                        for (let c = 0; c < 8; c++) {
+                            if (this.grid[r][c].piece && this.grid[r][c].piece.type !== 'K') {
+                                units.push({ r, c });
+                            }
+                        }
+                    }
+                    if (units.length > 0) {
+                        const pick = units[Math.floor(Math.random() * units.length)];
+                        const dc = Math.random() < 0.5 ? -1 : 1;
+                        const nc = pick.c + dc;
+                        if (this.inBounds(pick.r, nc) && !this.grid[pick.r][nc].piece && !this.grid[pick.r][nc].hazard) {
+                            this.grid[pick.r][nc].piece = this.grid[pick.r][pick.c].piece;
+                            this.grid[pick.r][pick.c].piece = null;
+                            this.logEvent(`🌪️ GRAVITY VORTEX shifted ${PIECE_INFO[this.grid[pick.r][nc].piece.type].name} sideways to ${String.fromCharCode(65 + nc)}${8 - pick.r}!`, 'text-sky-300 font-bold');
+                        } else {
+                            this.logEvent(`🌪️ Gravity Vortex swept across the arena!`, 'text-sky-300');
+                        }
+                    }
+                }
+
+                this.render();
+            }
+
+            /**************************************************************
+             * 5. AI ENGINE (Minimax with Alpha-Beta Pruning + Hazard Awareness)
+             **************************************************************/
+            evaluateBoard(board) {
+                let score = 0;
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const cell = board[r][c];
+                        const p = cell.piece;
+                        if (!p) continue;
+
+                        let val = PIECE_INFO[p.type].value;
+
+                        // Center control bonus
+                        const centerDist = Math.abs(3.5 - r) + Math.abs(3.5 - c);
+                        val += (7 - centerDist) * 6;
+
+                        // Advancement bonus for Vanguards
+                        if (p.type === 'V') {
+                            val += (p.player === 2 ? r * 14 : (7 - r) * 14);
+                        }
+
+                        // Penalty if frozen
+                        if (p.frozen > 0) val -= 45;
+
+                        if (p.player === 2) score += val;
+                        else score -= val;
+                    }
+                }
+                return score;
+            }
+
+            getAllPlayerMoves(player, board) {
+                const allMoves = [];
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const p = board[r][c].piece;
+                        if (p && p.player === player && p.frozen === 0) {
+                            const ms = this.getMovesForSquare(r, c, board);
+                            for (const m of ms) {
+                                allMoves.push({ fromR: r, fromC: c, move: m });
+                            }
+                        }
+                    }
+                }
+                // Order captures and Aether Core claims first for faster alpha-beta pruning
+                allMoves.sort((a, b) => {
+                    const scoreMove = (item) => {
+                        let s = 0;
+                        const target = board[item.move.r][item.move.c];
+                        if (target.piece) s += PIECE_INFO[target.piece.type].value;
+                        if (target.hazard && target.hazard.type === 'aether') s += 450;
+                        return s;
+                    };
+                    return scoreMove(b) - scoreMove(a);
+                });
+                return allMoves;
+            }
+
+            simulateMoveOnBoard(board, fromR, fromC, move) {
+                const next = this.cloneState(board);
+                const fromCell = next[fromR][fromC];
+                const toCell = next[move.r][move.c];
+                const movingPiece = fromCell.piece;
+
+                if (move.type === 'swap') {
+                    const ally = toCell.piece;
+                    toCell.piece = movingPiece;
+                    fromCell.piece = ally;
+                } else {
+                    toCell.piece = movingPiece;
+                    fromCell.piece = null;
+                    if (toCell.hazard && toCell.hazard.type === 'aether' && movingPiece.type !== 'K') {
+                        movingPiece.type = 'A';
+                        toCell.hazard = null;
+                    }
+                    const promoRow = movingPiece.player === 1 ? 0 : 7;
+                    if (movingPiece.type === 'V' && move.r === promoRow) {
+                        movingPiece.type = 'A';
+                    }
+                }
+                return next;
+            }
+
+            minimax(board, depth, alpha, beta, maximizingPlayer) {
+                if (depth === 0) {
+                    return this.evaluateBoard(board);
+                }
+
+                const player = maximizingPlayer ? 2 : 1;
+                const moves = this.getAllPlayerMoves(player, board);
+                if (moves.length === 0) return this.evaluateBoard(board);
+
+                if (maximizingPlayer) {
+                    let maxEval = -Infinity;
+                    for (const item of moves) {
+                        const target = board[item.move.r][item.move.c];
+                        if (target.piece && target.piece.type === 'K') return 50000;
+                        const nextBoard = this.simulateMoveOnBoard(board, item.fromR, item.fromC, item.move);
+                        const ev = this.minimax(nextBoard, depth - 1, alpha, beta, false);
+                        maxEval = Math.max(maxEval, ev);
+                        alpha = Math.max(alpha, ev);
+                        if (beta <= alpha) break;
+                    }
+                    return maxEval;
+                } else {
+                    let minEval = Infinity;
+                    for (const item of moves) {
+                        const target = board[item.move.r][item.move.c];
+                        if (target.piece && target.piece.type === 'K') return -50000;
+                        const nextBoard = this.simulateMoveOnBoard(board, item.fromR, item.fromC, item.move);
+                        const ev = this.minimax(nextBoard, depth - 1, alpha, beta, true);
+                        minEval = Math.min(minEval, ev);
+                        beta = Math.min(beta, ev);
+                        if (beta <= alpha) break;
+                    }
+                    return minEval;
+                }
+            }
+
+            findBestMoveForPlayer(player) {
+                const allMoves = this.getAllPlayerMoves(player, this.grid);
+                if (allMoves.length === 0) return null;
+
+                let chosen = allMoves[0];
+                const maximizing = player === 2;
+                let bestScore = maximizing ? -Infinity : Infinity;
+                const searchList = allMoves.slice(0, 22);
+
+                for (const candidate of searchList) {
+                    const target = this.grid[candidate.move.r][candidate.move.c];
+                    if (target.piece && target.piece.type === 'K') return candidate;
+
+                    const nextBoard = this.simulateMoveOnBoard(this.grid, candidate.fromR, candidate.fromC, candidate.move);
+                    const score = this.minimax(nextBoard, 1, -Infinity, Infinity, !maximizing);
+
+                    if (maximizing && score > bestScore) {
+                        bestScore = score;
+                        chosen = candidate;
+                    } else if (!maximizing && score < bestScore) {
+                        bestScore = score;
+                        chosen = candidate;
+                    }
+                }
+                return chosen;
+            }
+
+            makeAIMove() {
+                if (this.gameOver || this.turn !== 2) return;
+
+                const allMoves = this.getAllPlayerMoves(2, this.grid);
+                if (allMoves.length === 0) {
+                    this.endGame(1, 'Crimson Syndicate has no legal moves remaining!');
+                    return;
+                }
+
+                let chosen = allMoves[0];
+
+                if (this.mode === 'ai-easy') {
+                    // Mix of greedy capture and random move
+                    const captures = allMoves.filter(m => m.move.type === 'capture');
+                    if (captures.length > 0 && Math.random() < 0.7) {
+                        chosen = captures[Math.floor(Math.random() * captures.length)];
+                    } else {
+                        chosen = allMoves[Math.floor(Math.random() * allMoves.length)];
+                    }
+                } else {
+                    const depth = this.mode === 'ai-hard' ? 3 : 2;
+                    let bestScore = -Infinity;
+                    const searchList = allMoves.slice(0, 28); // Cap branching for instant Chromebook performance
+
+                    for (const candidate of searchList) {
+                        const target = this.grid[candidate.move.r][candidate.move.c];
+                        if (target.piece && target.piece.type === 'K') {
+                            chosen = candidate;
+                            break;
+                        }
+                        const nextBoard = this.simulateMoveOnBoard(this.grid, candidate.fromR, candidate.fromC, candidate.move);
+                        const score = this.minimax(nextBoard, depth - 1, -Infinity, Infinity, false) + (Math.random() * 8 - 4);
+                        if (score > bestScore) {
+                            bestScore = score;
+                            chosen = candidate;
+                        }
+                    }
+                }
+
+                this.executeMove(chosen.fromR, chosen.fromC, chosen.move);
+            }
+
+            /**************************************************************
+             * 6. UI RENDERING, INSPECTOR & INTERACTION
+             **************************************************************/
+            handleTileClick(r, c) {
+                if (this.gameOver) return;
+                // Prevent clicking during Bot's turn
+                if (this.mode.startsWith('ai') && this.turn === 2) return;
+
+                // Check if clicked square is a valid move for currently selected friendly unit
+                if (this.selected) {
+                    const validMove = this.legalMoves.find(m => m.r === r && m.c === c);
+                    if (validMove) {
+                        this.executeMove(this.selected.r, this.selected.c, validMove);
+                        return;
+                    }
+                }
+
+                const cell = this.grid[r][c];
+                this.updateInspector(r, c);
+
+                if (cell.piece && cell.piece.player === this.turn) {
+                    this.enemyPreview = null;
+                    this.enemyPreviewMoves = [];
+                    if (cell.piece.frozen > 0) {
+                        this.logEvent(`❄️ That unit is frozen in Cryo Ice for ${cell.piece.frozen} more turn(s)!`, 'text-cyan-300');
+                        return;
+                    }
+                    this.selected = { r, c };
+                    this.legalMoves = this.getMovesForSquare(r, c);
+                    sound.playTone(520, 'sine', 0.06, 0.08);
+                } else if (cell.piece && cell.piece.player !== this.turn) {
+                    // Enemy unit clicked! Scout and show all paths the enemy piece can take
+                    this.selected = null;
+                    this.legalMoves = [];
+                    this.enemyPreview = { r, c };
+                    this.enemyPreviewMoves = this.getMovesForSquare(r, c);
+                    sound.playTone(260, 'sawtooth', 0.08, 0.1);
+                } else {
+                    this.selected = null;
+                    this.legalMoves = [];
+                    this.enemyPreview = null;
+                    this.enemyPreviewMoves = [];
+                }
+
+                this.render();
+            }
+
+            updateInspector(r, c) {
+                const cell = this.grid[r][c];
+                const coord = `${String.fromCharCode(65 + c)}${8 - r}`;
+                document.getElementById('inspectorCoord').textContent = coord;
+
+                const titleEl = document.getElementById('inspectorTitle');
+                const descEl = document.getElementById('inspectorDesc');
+                const tagsEl = document.getElementById('inspectorTags');
+                tagsEl.innerHTML = '';
+
+                if (cell.piece) {
+                    const info = PIECE_INFO[cell.piece.type];
+                    const faction = cell.piece.player === 1 ? 'Solar Vanguard' : 'Crimson Syndicate';
+                    titleEl.textContent = `${info.name} (${faction})`;
+                    descEl.textContent = info.desc;
+                    info.tags.forEach(t => {
+                        const span = document.createElement('span');
+                        span.className = 'px-2 py-0.5 rounded bg-sky-500/20 border border-sky-500/40 text-[10px] text-sky-300 font-semibold';
+                        span.textContent = t;
+                        tagsEl.appendChild(span);
+                    });
+                    if (cell.piece.frozen > 0) {
+                        const fSpan = document.createElement('span');
+                        fSpan.className = 'px-2 py-0.5 rounded bg-cyan-500/30 text-[10px] text-white font-bold';
+                        fSpan.textContent = `❄️ Frozen (${cell.piece.frozen}T)`;
+                        tagsEl.appendChild(fSpan);
+                    }
+                } else if (cell.hazard) {
+                    titleEl.textContent = `⚠️ Anomaly: ${cell.hazard.name}`;
+                    if (cell.hazard.type === 'spike') {
+                        descEl.textContent = `Blocks movement onto or past this square for ${cell.hazard.turns} more turns. Bastions can smash through it!`;
+                    } else if (cell.hazard.type === 'crater') {
+                        descEl.textContent = `Scorched meteor impact site. Impassable for ${cell.hazard.turns} more turns.`;
+                    } else if (cell.hazard.type === 'aether') {
+                        descEl.textContent = `Cosmic energy crystal! Move any non-Sovereign unit here within ${cell.hazard.turns} turns to immediately promote into an Archon.`;
+                    }
+                } else {
+                    titleEl.textContent = `Empty Sector (${coord})`;
+                    descEl.textContent = 'Clear terrain. Ready for unit deployment or incoming Rift anomalies.';
+                }
+            }
+
+            updateBoardFlip() {
+                const container = document.getElementById('boardContainer');
+                if (this.mode === 'pvp' && this.autoFlipPVP && this.turn === 2) {
+                    container.classList.add('flipped');
+                } else {
+                    container.classList.remove('flipped');
+                }
+            }
+
+            logEvent(text, colorClass = 'text-slate-300') {
+                const log = document.getElementById('battleLog');
+                const entry = document.createElement('div');
+                entry.className = `${colorClass} leading-snug border-b border-slate-800/60 pb-1`;
+                entry.textContent = `[T${this.turnNumber}] ${text}`;
+                log.prepend(entry);
+            }
+
+            endGame(winner, reason) {
+                this.gameOver = true;
+                this.render();
+                sound.playVictory();
+                const modal = document.getElementById('victoryModal');
+                const title = document.getElementById('victoryTitle');
+                const reasonEl = document.getElementById('victoryReason');
+
+                title.textContent = winner === 1 ? 'SOLAR VANGUARD TRIUMPHS!' : 'CRIMSON SYNDICATE WINS!';
+                title.className = `font-display font-black text-2xl mb-1 ${winner === 1 ? 'text-sky-400' : 'text-rose-400'}`;
+                reasonEl.textContent = reason;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+
+            render() {
+                const gridEl = document.getElementById('boardGrid');
+                gridEl.innerHTML = '';
+
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const cell = this.grid[r][c];
+                        const tile = document.createElement('div');
+                        const isLight = (r + c) % 2 === 0;
+                        tile.className = `tile ${isLight ? 'tile-light' : 'tile-dark'}`;
+
+                        if (cell.hazard && cell.hazard.type === 'void') {
+                            tile.classList.add('tile-void');
+                        }
+
+                        if (this.selected && this.selected.r === r && this.selected.c === c) {
+                            tile.classList.add('selected');
+                        }
+
+                        if (this.enemyPreview && this.enemyPreview.r === r && this.enemyPreview.c === c) {
+                            tile.classList.add('selected-enemy');
+                        }
+
+                        if (this.lastMove && ((this.lastMove.fromR === r && this.lastMove.fromC === c) || (this.lastMove.toR === r && this.lastMove.toC === c))) {
+                            tile.classList.add('last-move');
+                        }
+
+                        // Render Flashing Red Target Circle if Incoming Airstrike is locked onto this tile
+                        if (this.airstrikeTargets && this.airstrikeTargets.some(t => t.r === r && t.c === c)) {
+                            const targetCircle = document.createElement('div');
+                            targetCircle.className = 'airstrike-target-circle';
+                            tile.appendChild(targetCircle);
+                        }
+
+                        // Coordinate labels on outer ranks/files
+                        if (c === 0) {
+                            const rankLbl = document.createElement('span');
+                            rankLbl.className = 'coord-label absolute top-0.5 left-1 text-[9px] font-bold text-slate-400/75 pointer-events-none';
+                            rankLbl.textContent = 8 - r;
+                            tile.appendChild(rankLbl);
+                        }
+                        if (r === 7) {
+                            const fileLbl = document.createElement('span');
+                            fileLbl.className = 'coord-label absolute bottom-0.5 right-1 text-[9px] font-bold text-slate-400/75 pointer-events-none';
+                            fileLbl.textContent = String.fromCharCode(65 + c);
+                            tile.appendChild(fileLbl);
+                        }
+
+                        // Render Hazard if present
+                        if (cell.hazard) {
+                            const hazWrap = document.createElement('div');
+                            hazWrap.className = 'hazard-wrapper';
+                            hazWrap.innerHTML = getHazardSVG(cell.hazard);
+                            tile.appendChild(hazWrap);
+                        }
+
+                        // Render Piece if present
+                        if (cell.piece) {
+                            const pWrap = document.createElement('div');
+                            pWrap.className = 'piece-wrapper';
+                            pWrap.innerHTML = getPieceSVG(cell.piece.type, cell.piece.player, cell.piece.frozen);
+                            tile.appendChild(pWrap);
+                        }
+
+                        // Render Legal Move Indicators
+                        const moveMatch = this.legalMoves.find(m => m.r === r && m.c === c);
+                        if (moveMatch) {
+                            if (moveMatch.type === 'capture') {
+                                const ring = document.createElement('div');
+                                ring.className = 'capture-ring';
+                                tile.appendChild(ring);
+                            } else if (moveMatch.type === 'swap' || moveMatch.type === 'ability') {
+                                const ring = document.createElement('div');
+                                ring.className = 'ability-ring';
+                                tile.appendChild(ring);
+                            } else {
+                                const dot = document.createElement('div');
+                                dot.className = 'move-dot';
+                                tile.appendChild(dot);
+                            }
+                        }
+
+                        // Render Enemy Threat Path Indicators when an enemy piece is clicked
+                        const enemyMatch = this.enemyPreviewMoves.find(m => m.r === r && m.c === c);
+                        if (enemyMatch) {
+                            if (enemyMatch.type === 'capture') {
+                                const ring = document.createElement('div');
+                                ring.className = 'enemy-capture-ring';
+                                tile.appendChild(ring);
+                            } else {
+                                const dot = document.createElement('div');
+                                dot.className = 'enemy-move-dot';
+                                tile.appendChild(dot);
+                            }
+                        }
+
+                        tile.addEventListener('click', () => this.handleTileClick(r, c));
+                        gridEl.appendChild(tile);
+                    }
+                }
+
+                // Update Status Sidebar
+                document.getElementById('turnCounterBadge').textContent = `Turn ${this.turnNumber}`;
+                const turnBanner = document.getElementById('turnBanner');
+                const turnDot = document.getElementById('turnDot');
+                const turnTitle = document.getElementById('turnTitle');
+                const turnSub = document.getElementById('turnSubtitle');
+
+                if (this.turn === 1) {
+                    turnBanner.className = 'p-3 rounded-xl bg-gradient-to-r from-sky-500/20 to-blue-600/10 border border-sky-400/40 flex items-center gap-3 transition-all';
+                    turnDot.className = 'w-4 h-4 rounded-full bg-sky-400 shadow-[0_0_12px_#38bdf8]';
+                    turnTitle.textContent = 'SOLAR VANGUARD';
+                    turnSub.textContent = 'Player 1 Turn to Move';
+                } else {
+                    turnBanner.className = 'p-3 rounded-xl bg-gradient-to-r from-rose-500/20 to-purple-600/10 border border-rose-400/40 flex items-center gap-3 transition-all';
+                    turnDot.className = 'w-4 h-4 rounded-full bg-rose-500 shadow-[0_0_12px_#f43f5e]';
+                    turnTitle.textContent = 'CRIMSON SYNDICATE';
+                    turnSub.textContent = this.mode === 'pvp' ? 'Player 2 Turn to Move' : 'AI Bot Thinking...';
+                }
+
+                // Sovereign Danger Alert
+                const dangerBanner = document.getElementById('dangerBanner');
+                if (this.isSovereignInDanger(this.turn)) {
+                    dangerBanner.classList.remove('hidden');
+                } else {
+                    dangerBanner.classList.add('hidden');
+                }
+
+                // Captured counts
+                document.getElementById('capturedByBottom').textContent = `Captured: ${this.capturedCount[1]}`;
+                document.getElementById('capturedByTop').textContent = `Captured: ${this.capturedCount[2]}`;
+
+                // Update Cataclysm Progress & Active List
+                const countEl = document.getElementById('eventCountdownText');
+                const barEl = document.getElementById('eventProgressBar');
+                if (this.eventFrequency === 0) {
+                    countEl.innerHTML = 'Random anomalies are <span class="text-slate-400">Disabled</span>.';
+                    barEl.style.width = '0%';
+                } else {
+                    countEl.innerHTML = `Next anomaly spawns in <span class="text-amber-400 font-bold">${this.turnsUntilEvent}</span> turn(s).`;
+                    const pct = Math.min(100, Math.round(((this.eventFrequency - this.turnsUntilEvent + 1) / this.eventFrequency) * 100));
+                    barEl.style.width = `${pct}%`;
+                }
+
+                const activeList = document.getElementById('activeEventsList');
+                activeList.innerHTML = '';
+                let hazardCount = 0;
+                for (let r = 0; r < 8; r++) {
+                    for (let c = 0; c < 8; c++) {
+                        const cell = this.grid[r][c];
+                        const coord = `${String.fromCharCode(65 + c)}${8 - r}`;
+                        if (cell.hazard) {
+                            hazardCount++;
+                            const item = document.createElement('div');
+                            item.className = 'flex items-center justify-between bg-slate-800/90 px-2.5 py-1 rounded-lg border border-slate-700';
+                            item.innerHTML = `<span>${cell.hazard.name} <strong class="text-sky-400">(${coord})</strong></span><span class="text-amber-300 font-mono">${cell.hazard.turns}T left</span>`;
+                            activeList.appendChild(item);
+                        }
+                        if (cell.piece && cell.piece.frozen > 0) {
+                            hazardCount++;
+                            const item = document.createElement('div');
+                            item.className = 'flex items-center justify-between bg-cyan-950/60 px-2.5 py-1 rounded-lg border border-cyan-700/50';
+                            item.innerHTML = `<span>❄️ Frozen ${PIECE_INFO[cell.piece.type].name} <strong>(${coord})</strong></span><span class="text-cyan-300 font-mono">${cell.piece.frozen}T</span>`;
+                            activeList.appendChild(item);
+                        }
+                    }
+                }
+                if (hazardCount === 0) {
+                    activeList.innerHTML = '<div class="text-slate-500 italic text-[11px]">No active hazards on the board right now.</div>';
+                }
+            }
+        }
+
+        const game = new TactiCoreGame();
+
+        /**************************************************************
+         * 7. ANIMATED BACKGROUND NEBULA CANVAS (Chromebook Friendly)
+         **************************************************************/
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let particles = [];
+
+        function resizeBgCanvas() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+
+        function initParticles() {
+            particles = Array.from({ length: 42 }, () => ({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                r: Math.random() * 2.2 + 0.8,
+                vx: (Math.random() - 0.5) * 0.4,
+                vy: (Math.random() - 0.5) * 0.4,
+                alpha: Math.random() * 0.65 + 0.2
+            }));
+        }
+
+        function animateBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            for (const p of particles) {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0) p.x = bgCanvas.width;
+                if (p.x > bgCanvas.width) p.x = 0;
+                if (p.y < 0) p.y = bgCanvas.height;
+                if (p.y > bgCanvas.height) p.y = 0;
+
+                bgCtx.beginPath();
+                bgCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                bgCtx.fillStyle = `rgba(148, 163, 184, ${p.alpha})`;
+                bgCtx.fill();
+            }
+            requestAnimationFrame(animateBg);
+        }
+
+        /**************************************************************
+         * 8. EVENT LISTENERS, CUSTOM ASSET UPLOADERS & CONTROLS
+         **************************************************************/
+        window.onload = function () {
+            resizeBgCanvas();
+            initParticles();
+            animateBg();
+            window.addEventListener('resize', resizeBgCanvas);
+
+            // Start Background Music automatically (and resume on first click if browser autoplay policy requires gesture)
+            sound.startMusicLoop();
+            const unlockAutoMusic = () => {
+                if (sound.musicPlaying) {
+                    sound.init();
+                    if (!sound.bgmInterval) sound.startMusicLoop();
+                }
+                window.removeEventListener('pointerdown', unlockAutoMusic);
+            };
+            window.addEventListener('pointerdown', unlockAutoMusic);
+
+            // Press ESC key to unselect any selected piece (including Swap pieces like Warp Mage)
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    game.unselectPiece();
+                }
+            });
+
+            const boardContainer = document.getElementById('boardContainer');
+            const cameraBtn = document.getElementById('cameraToggleBtn');
+
+            // Normal Chess vs Better Chess Toggle Button
+            const classicChessBtn = document.getElementById('classicChessToggleBtn');
+            const classicChessText = document.getElementById('classicChessBtnText');
+            classicChessBtn.addEventListener('click', () => {
+                game.classicChess = !game.classicChess;
+                if (game.classicChess) {
+                    classicChessText.textContent = 'Rules: Normal Chess';
+                    classicChessBtn.className = 'px-3 py-1.5 rounded-lg bg-amber-600/30 hover:bg-amber-600/40 border border-amber-400 text-amber-200 text-xs font-bold flex items-center gap-1.5 transition shadow';
+                    game.eventFrequency = 0;
+                    document.getElementById('eventFreqSelect').value = '0';
+                    game.turnsUntilEvent = 999;
+                } else {
+                    classicChessText.textContent = 'Rules: Better Chess';
+                    classicChessBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-amber-950/70 border border-slate-600 text-xs font-bold flex items-center gap-1.5 transition shadow';
+                    game.eventFrequency = 4;
+                    document.getElementById('eventFreqSelect').value = '4';
+                    game.turnsUntilEvent = 4;
+                }
+                game.selected = null;
+                game.legalMoves = [];
+                game.logEvent(`♟️ Switched movement rules to ${game.classicChess ? 'Classic Normal Chess' : 'Upgraded Better Chess'}!`, 'text-amber-300 font-bold');
+                game.render();
+            });
+
+            // 2.5D vs 2D Toggle
+            cameraBtn.addEventListener('click', () => {
+                game.is25D = !game.is25D;
+                if (game.is25D) {
+                    boardContainer.classList.remove('view-2d');
+                    boardContainer.classList.add('view-25d');
+                    cameraBtn.textContent = '📐 2.5D View';
+                } else {
+                    boardContainer.classList.remove('view-25d');
+                    boardContainer.classList.add('view-2d');
+                    cameraBtn.textContent = '🗺️ 2D Flat View';
+                }
+            });
+
+            // Quick Mode Cycle Button in Header
+            const modeOrder = ['ai-med', 'ai-hard', 'pvp', 'ai-easy'];
+            const modeLabels = {
+                'ai-easy': { icon: '🤖', text: 'VS AI (Scout)', top: 'Crimson Syndicate (Easy Bot)' },
+                'ai-med': { icon: '🧠', text: 'VS AI (Med)', top: 'Crimson Syndicate (Tactician Bot)' },
+                'ai-hard': { icon: '👑', text: 'VS AI (Hard)', top: 'Crimson Syndicate (Grandmaster)' },
+                'pvp': { icon: '⚔️', text: 'PVP (Flip)', top: 'Crimson Syndicate (Player 2)' }
+            };
+
+            function applyGameMode(newMode) {
+                game.mode = newMode;
+                const info = modeLabels[newMode];
+                document.getElementById('modeIcon').textContent = info.icon;
+                document.getElementById('modeLabel').textContent = info.text;
+                document.getElementById('topPlayerName').textContent = info.top;
+
+                document.querySelectorAll('.mode-option').forEach(btn => {
+                    if (btn.dataset.mode === newMode) {
+                        btn.className = 'mode-option p-2.5 rounded-xl bg-sky-500/20 border border-sky-400 text-left transition';
+                    } else {
+                        btn.className = 'mode-option p-2.5 rounded-xl bg-slate-800 border border-slate-700 hover:border-sky-400 text-left transition';
+                    }
+                });
+
+                game.updateBoardFlip();
+                game.render();
+                if (game.mode.startsWith('ai') && game.turn === 2 && !game.gameOver) {
+                    setTimeout(() => game.makeAIMove(), 450);
+                }
+            }
+
+            document.getElementById('modeBtn').addEventListener('click', () => {
+                const idx = modeOrder.indexOf(game.mode);
+                const next = modeOrder[(idx + 1) % modeOrder.length];
+                applyGameMode(next);
+            });
+
+            // PVP Auto-Flip Checkbox
+            document.getElementById('autoFlipToggle').addEventListener('change', (e) => {
+                game.autoFlipPVP = e.target.checked;
+                game.updateBoardFlip();
+            });
+
+            // Cataclysm Frequency Selector
+            document.getElementById('eventFreqSelect').addEventListener('change', (e) => {
+                game.eventFrequency = parseInt(e.target.value, 10);
+                game.turnsUntilEvent = game.eventFrequency > 0 ? game.eventFrequency : 999;
+                game.render();
+            });
+
+            // Force Instant Random Event & Jet Airstrike Buttons
+            document.getElementById('forceEventBtn').addEventListener('click', () => {
+                game.triggerRandomCataclysm();
+            });
+            document.getElementById('forceAirstrikeBtn').addEventListener('click', () => {
+                game.triggerBombingRun();
+            });
+
+            // Zombie Infection Mode Toggle (Scary Crimson Red Theme Override)
+            const zombieBtn = document.getElementById('zombieToggleBtn');
+            const zombieText = document.getElementById('zombieBtnText');
+            const zombieVignette = document.getElementById('zombieRedVignette');
+
+            function setZombieMode(enabled) {
+                game.zombieMode = enabled;
+                if (enabled) {
+                    document.body.classList.add('zombie-mode-active');
+                    zombieVignette.classList.remove('hidden');
+                    zombieBtn.className = 'px-3 py-1.5 rounded-lg bg-red-700 hover:bg-red-600 border border-red-400 text-white text-xs font-bold flex items-center gap-1.5 transition shadow-[0_0_15px_#dc2626]';
+                    zombieText.textContent = 'Zombie: ON';
+                    game.logEvent('🧟 ZOMBIE APOCHALYPSE ENABLED! Captured foes mutate into your own units!', 'text-lime-400 font-bold');
+                } else {
+                    document.body.classList.remove('zombie-mode-active');
+                    zombieVignette.classList.add('hidden');
+                    zombieBtn.className = 'px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-red-950/80 border border-slate-600 text-xs font-bold flex items-center gap-1.5 transition shadow';
+                    zombieText.textContent = 'Zombie: OFF';
+                    game.logEvent('🛡️ Standard Tactical Rules restored.', 'text-sky-400');
+                }
+                game.render();
+            }
+
+            zombieBtn.addEventListener('click', () => {
+                setZombieMode(!game.zombieMode);
+            });
+
+            // Commander Suggestion Toast Controls
+            document.getElementById('execCommanderMoveBtn').addEventListener('click', () => {
+                if (game.commanderSuggestion && !game.gameOver) {
+                    const { fromR, fromC, move } = game.commanderSuggestion;
+                    game.executeMove(fromR, fromC, move);
+                }
+            });
+            document.getElementById('closeCommanderBtn').addEventListener('click', () => {
+                game.commanderSuggestion = null;
+                game.hideCommanderBanner();
+                game.render();
+            });
+
+            // Cancel Game & Quick Lobby Modal Controls
+            const cancelModal = document.getElementById('cancelModal');
+            document.getElementById('cancelGameBtn').addEventListener('click', () => {
+                game.cancelGame();
+            });
+            document.getElementById('resumeCanceledBtn').addEventListener('click', () => {
+                cancelModal.classList.add('hidden');
+                cancelModal.classList.remove('flex');
+                game.reset();
+            });
+            document.querySelectorAll('.quick-start-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const preset = btn.dataset.quickStart;
+                    cancelModal.classList.add('hidden');
+                    cancelModal.classList.remove('flex');
+                    if (preset === 'zombie-ai') {
+                        setZombieMode(true);
+                        applyGameMode('ai-med');
+                    } else if (preset === 'zombie-pvp') {
+                        setZombieMode(true);
+                        applyGameMode('pvp');
+                    } else {
+                        setZombieMode(false);
+                        applyGameMode(preset);
+                    }
+                    game.reset();
+                });
+            });
+
+            // Undo & Reset Buttons
+            document.getElementById('undoBtn').addEventListener('click', () => game.undo());
+            document.getElementById('resetGameBtn').addEventListener('click', () => game.reset());
+            document.getElementById('playAgainBtn').addEventListener('click', () => {
+                document.getElementById('victoryModal').classList.add('hidden');
+                document.getElementById('victoryModal').classList.remove('flex');
+                game.reset();
+            });
+
+            // Music Toggle
+            document.getElementById('musicToggleBtn').addEventListener('click', () => {
+                sound.toggleMusic();
+            });
+
+            // Modals Open/Close
+            const studioModal = document.getElementById('studioModal');
+            const guideModal = document.getElementById('guideModal');
+
+            document.getElementById('openStudioBtn').addEventListener('click', () => {
+                studioModal.classList.remove('hidden');
+                studioModal.classList.add('flex');
+            });
+            const closeStudio = () => {
+                studioModal.classList.add('hidden');
+                studioModal.classList.remove('flex');
+            };
+            document.getElementById('closeStudioBtn').addEventListener('click', closeStudio);
+            document.getElementById('doneStudioBtn').addEventListener('click', closeStudio);
+
+            document.getElementById('openGuideBtn').addEventListener('click', () => {
+                guideModal.classList.remove('hidden');
+                guideModal.classList.add('flex');
+            });
+            document.getElementById('closeGuideBtn').addEventListener('click', () => {
+                guideModal.classList.add('hidden');
+                guideModal.classList.remove('flex');
+            });
+
+            // Mode Selection inside Studio Modal
+            document.querySelectorAll('.mode-option').forEach(btn => {
+                btn.addEventListener('click', () => applyGameMode(btn.dataset.mode));
+            });
+
+            // Built-in Theme Selection
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const choice = btn.dataset.themeChoice;
+                    // Clear any custom inline CSS variables so preset theme takes effect
+                    ['--bg-primary', '--board-light', '--board-dark', '--board-border', '--p1-color', '--p2-color', '--p1-glow', '--p2-glow'].forEach(prop => {
+                        document.documentElement.style.removeProperty(prop);
+                    });
+
+                    if (choice === 'cyber') document.documentElement.removeAttribute('data-theme');
+                    else document.documentElement.setAttribute('data-theme', choice);
+
+                    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('border-sky-400'));
+                    btn.classList.add('border-sky-400');
+                    game.render();
+                });
+            });
+
+            // Custom Color Theme Creator Apply Button
+            document.getElementById('applyCustomColorsBtn').addEventListener('click', () => {
+                const bg = document.getElementById('customColorBg').value;
+                const light = document.getElementById('customColorLight').value;
+                const dark = document.getElementById('customColorDark').value;
+                const border = document.getElementById('customColorBorder').value;
+                const p1 = document.getElementById('customColorP1').value;
+                const p2 = document.getElementById('customColorP2').value;
+
+                document.documentElement.removeAttribute('data-theme');
+                document.documentElement.style.setProperty('--bg-primary', bg);
+                document.documentElement.style.setProperty('--board-light', light);
+                document.documentElement.style.setProperty('--board-dark', dark);
+                document.documentElement.style.setProperty('--board-border', border);
+                document.documentElement.style.setProperty('--p1-color', p1);
+                document.documentElement.style.setProperty('--p1-glow', `${p1}80`);
+                document.documentElement.style.setProperty('--p2-color', p2);
+                document.documentElement.style.setProperty('--p2-glow', `${p2}80`);
+
+                game.logEvent('🎨 Applied custom user-created color theme!', 'text-sky-400 font-bold');
+                game.render();
+            });
+
+            // Custom Room Background Image Upload
+            document.getElementById('bgImageInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const url = URL.createObjectURL(file);
+                document.getElementById('customBgLayer').style.backgroundImage = `url('${url}')`;
+                game.logEvent('🖼️ Custom room background image loaded!', 'text-sky-400');
+            });
+
+            document.getElementById('clearBgImageBtn').addEventListener('click', () => {
+                document.getElementById('customBgLayer').style.backgroundImage = 'none';
+                document.getElementById('bgImageInput').value = '';
+            });
+
+            // Custom Chessboard Surface Image Upload
+            document.getElementById('boardImageInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const url = URL.createObjectURL(file);
+                document.documentElement.style.setProperty('--board-bg-image', `url('${url}')`);
+                boardContainer.classList.add('has-custom-board');
+                game.logEvent('♟️ Custom chessboard texture applied!', 'text-purple-400');
+            });
+
+            document.getElementById('clearBoardImageBtn').addEventListener('click', () => {
+                document.documentElement.style.setProperty('--board-bg-image', 'none');
+                boardContainer.classList.remove('has-custom-board');
+                document.getElementById('boardImageInput').value = '';
+            });
+
+            // Background Music Preset & Custom File Upload
+            document.getElementById('bgmPresetSelect').addEventListener('change', (e) => {
+                sound.musicPreset = e.target.value;
+                if (sound.musicPlaying) sound.startMusicLoop();
+            });
+
+            document.getElementById('bgmAudioInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                sound.customBgmUrl = URL.createObjectURL(file);
+                sound.musicPreset = 'custom';
+                document.getElementById('bgmPresetSelect').value = 'custom';
+                if (!sound.musicPlaying) sound.toggleMusic();
+                else sound.startMusicLoop();
+                game.logEvent(`🎵 Playing uploaded music: ${file.name}`, 'text-emerald-400');
+            });
+
+            // Custom Sound Effects Uploaders
+            document.getElementById('captureSfxInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                sound.customCaptureAudio = new Audio(URL.createObjectURL(file));
+                game.logEvent(`🔊 Custom Capture SFX loaded: ${file.name}`, 'text-sky-400');
+            });
+
+            document.getElementById('eventSfxInput').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                sound.customEventAudio = new Audio(URL.createObjectURL(file));
+                game.logEvent(`🔊 Custom Cataclysm SFX loaded: ${file.name}`, 'text-amber-400');
+            });
+        };
+    </script>
+</body>
+</html>
